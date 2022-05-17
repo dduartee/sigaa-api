@@ -198,6 +198,13 @@ export class SigaaPage implements Page {
 
   public get $(): cheerio.Root {
     if (this._$ === undefined) {
+      const intervalo = setInterval(() => {
+        if (this._$) {
+          this._$ = undefined;
+          clearInterval(intervalo);
+          //console.log('cleaned');
+        }
+      }, 1000);
       this._$ = $load(this.body, {
         normalizeWhitespace: true
       });
