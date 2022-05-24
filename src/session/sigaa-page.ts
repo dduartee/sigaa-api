@@ -209,7 +209,7 @@ export class SigaaPage implements Page {
     this._interval$ = setTimeout(() => {
       this._$ = undefined;
       this._interval$ = null;
-    }, 1000);
+    }, 100);
 
     if (this._$ === undefined) {
       this._$ = $load(this.body, {
