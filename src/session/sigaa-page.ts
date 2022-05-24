@@ -171,6 +171,11 @@ export class SigaaPage implements Page {
   private _$?: cheerio.Root;
 
   /**
+   * Interval ID to keep $ in memory
+   **/
+  private _interval$: NodeJS.Timeout | null = null;
+
+  /**
    * current page view state.
    **/
   private _viewState?: string;
@@ -197,18 +202,21 @@ export class SigaaPage implements Page {
   }
 
   public get $(): cheerio.Root {
+    if (this._interval$ !== null) {
+      clearTimeout(this._interval$);
+    }
+
+    this._interval$ = setTimeout(() => {
+      this._$ = undefined;
+      this._interval$ = null;
+    }, 1000);
+
     if (this._$ === undefined) {
-      const intervalo = setInterval(() => {
-        if (this._$) {
-          this._$ = undefined;
-          clearInterval(intervalo);
-          //console.log('cleaned');
-        }
-      }, 1000);
       this._$ = $load(this.body, {
         normalizeWhitespace: true
       });
     }
+
     return this._$;
   }
 
