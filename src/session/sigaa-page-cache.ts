@@ -31,6 +31,9 @@ export interface PageCache {
  * @category Internal
  */
 export class SigaaPageCache implements PageCache {
+  constructor(
+    private timeoutCache = 5 * 60 * 1000 // Cache page timeout, default is 5 min
+  ) {}
   /**
    * Array of all pages in cache.
    */
@@ -40,11 +43,6 @@ export class SigaaPageCache implements PageCache {
    * Interval id to clear the cache.
    */
   private intervalId?: NodeJS.Timeout;
-
-  /**
-   * Cache page timeout, default is 5 min
-   */
-  public timeoutCache = 5 * 60 * 1000; // 5min
 
   /**
    * @inheritdoc
