@@ -1098,145 +1098,153 @@ export class SigaaCourseStudent implements CourseStudent {
   /**
    * @inheritdoc
    */
-  async getGrades(): Promise<GradeGroup[]> {
-    const page = await this.getCourseSubMenu('Ver Notas');
-    const getPositionByCellColSpan = (
-      ths: cheerio.Cheerio,
-      cell: cheerio.Element
-    ) => {
-      let i = 0;
-      for (const tr of ths.toArray()) {
-        if (cell === tr) {
-          return i;
+  async getGrades(retry = true): Promise<GradeGroup[]> {
+    try {
+      const page = await this.getCourseSubMenu('Ver Notas', retry);
+      const getPositionByCellColSpan = (
+        ths: cheerio.Cheerio,
+        cell: cheerio.Element
+      ) => {
+        let i = 0;
+        for (const tr of ths.toArray()) {
+          if (cell === tr) {
+            return i;
+          }
+          i += parseInt(page.$(tr).attr('colspan') || '1', 10);
         }
-        i += parseInt(page.$(tr).attr('colspan') || '1', 10);
+        throw new Error('SIGAA: Invalid grade table.');
+      };
+
+      const removeCellsWithName = ['', 'Matrícula', 'Nome', 'Sit.', 'Faltas'];
+
+      const table = page.$('table.tabelaRelatorio');
+      if (table.length < 1)
+        throw new Error('SIGAA: Received empty table on grade page.');
+
+      const theadTrs = page.$('thead tr').toArray();
+      const valueCells = page.$(table).find('tbody tr').children();
+      if (valueCells.length === 0) {
+        throw new Error('SIGAA: Page grades without grades.');
       }
-      throw new Error('SIGAA: Invalid grade table.');
-    };
+      const grades: GradeGroup[] = [];
 
-    const removeCellsWithName = ['', 'Matrícula', 'Nome', 'Sit.', 'Faltas'];
+      const theadElements: cheerio.Cheerio[] = [];
+      for (const theadTr of theadTrs) {
+        theadElements.push(page.$(theadTr).find('th'));
+      }
 
-    const table = page.$('table.tabelaRelatorio');
-    if (table.length < 1)
-      throw new Error('SIGAA: Received empty table on grade page.');
+      for (let i = 0; i < theadElements[0].length; i++) {
+        const gradeGroupName = this.parser.removeTagsHtml(
+          theadElements[0].eq(i).html()
+        );
+        if (removeCellsWithName.indexOf(gradeGroupName) !== -1) continue;
+        const index = getPositionByCellColSpan(
+          theadElements[0],
+          theadElements[0][i]
+        );
+        const theadElementColspan = parseInt(
+          theadElements[0].eq(i).attr('colspan') || '1',
+          10
+        );
+        if (theadElementColspan === 1) {
+          const valueString = this.parser
+            .removeTagsHtml(valueCells.eq(index).html())
+            .replace(/,/g, '.');
+          let value;
+          if (valueString.length > 0) {
+            value = parseFloat(valueString);
+          }
+          grades.push({
+            name: gradeGroupName,
+            value,
+            type: 'only-average'
+          });
+        } else {
+          let type = 'weighted-average';
+          const gradesSumOfGrades: SubGradeSumOfGrades[] = [];
+          const gradesWeighted: SubGradeWeightedAverage[] = [];
+          for (let j = index; j < index + theadElementColspan; j++) {
+            const fullId = theadElements[1].eq(j).attr('id');
+            if (!fullId) throw new Error('SIGAA: Grade without id.');
+            const gradeId = fullId.slice(5);
 
-    const theadTrs = page.$('thead tr').toArray();
-    const valueCells = page.$(table).find('tbody tr').children();
-    if (valueCells.length === 0) {
-      throw new Error('SIGAA: Page grades without grades.');
-    }
-    const grades: GradeGroup[] = [];
+            if (gradeId !== '') {
+              const gradeName = page.$(`input#denAval_${gradeId}`).val();
+              const gradeCode = page.$(`input#abrevAval_${gradeId}`).val();
+              const maxValue = parseFloat(
+                page.$(`input#notaAval_${gradeId}`).val()
+              );
 
-    const theadElements: cheerio.Cheerio[] = [];
-    for (const theadTr of theadTrs) {
-      theadElements.push(page.$(theadTr).find('th'));
-    }
+              const gradeWeight = parseFloat(
+                page.$(`input#pesoAval_${gradeId}`).val()
+              );
 
-    for (let i = 0; i < theadElements[0].length; i++) {
-      const gradeGroupName = this.parser.removeTagsHtml(
-        theadElements[0].eq(i).html()
-      );
-      if (removeCellsWithName.indexOf(gradeGroupName) !== -1) continue;
-      const index = getPositionByCellColSpan(
-        theadElements[0],
-        theadElements[0][i]
-      );
-      const theadElementColspan = parseInt(
-        theadElements[0].eq(i).attr('colspan') || '1',
-        10
-      );
-      if (theadElementColspan === 1) {
-        const valueString = this.parser
-          .removeTagsHtml(valueCells.eq(index).html())
-          .replace(/,/g, '.');
-        let value;
-        if (valueString.length > 0) {
-          value = parseFloat(valueString);
-        }
-        grades.push({
-          name: gradeGroupName,
-          value,
-          type: 'only-average'
-        });
-      } else {
-        let type = 'weighted-average';
-        const gradesSumOfGrades: SubGradeSumOfGrades[] = [];
-        const gradesWeighted: SubGradeWeightedAverage[] = [];
-        for (let j = index; j < index + theadElementColspan; j++) {
-          const fullId = theadElements[1].eq(j).attr('id');
-          if (!fullId) throw new Error('SIGAA: Grade without id.');
-          const gradeId = fullId.slice(5);
+              let value: number | undefined = parseFloat(
+                this.parser
+                  .removeTagsHtml(valueCells.eq(j).html())
+                  .replace(/,/g, '.')
+              );
 
-          if (gradeId !== '') {
-            const gradeName = page.$(`input#denAval_${gradeId}`).val();
-            const gradeCode = page.$(`input#abrevAval_${gradeId}`).val();
-            const maxValue = parseFloat(
-              page.$(`input#notaAval_${gradeId}`).val()
-            );
-
-            const gradeWeight = parseFloat(
-              page.$(`input#pesoAval_${gradeId}`).val()
-            );
-
-            let value: number | undefined = parseFloat(
-              this.parser
-                .removeTagsHtml(valueCells.eq(j).html())
-                .replace(/,/g, '.')
-            );
-
-            if (!isNaN(gradeWeight)) {
-              type = 'weighted-average';
-            }
-            if (!isNaN(maxValue)) {
-              type = 'sum-of-grades';
-            }
-            if (!value && value !== 0) value = undefined;
-            if (type === 'sum-of-grades') {
-              gradesSumOfGrades.push({
-                name: gradeName,
-                code: gradeCode,
-                maxValue: maxValue,
-                value
-              });
+              if (!isNaN(gradeWeight)) {
+                type = 'weighted-average';
+              }
+              if (!isNaN(maxValue)) {
+                type = 'sum-of-grades';
+              }
+              if (!value && value !== 0) value = undefined;
+              if (type === 'sum-of-grades') {
+                gradesSumOfGrades.push({
+                  name: gradeName,
+                  code: gradeCode,
+                  maxValue: maxValue,
+                  value
+                });
+              } else {
+                gradesWeighted.push({
+                  name: gradeName,
+                  code: gradeCode,
+                  weight: gradeWeight,
+                  value
+                });
+              }
             } else {
-              gradesWeighted.push({
-                name: gradeName,
-                code: gradeCode,
-                weight: gradeWeight,
-                value
-              });
-            }
-          } else {
-            let average: number | undefined = parseFloat(
-              this.parser
-                .removeTagsHtml(valueCells.eq(j).html())
-                .replace(/,/g, '.')
-            );
-            if (isNaN(average)) average = undefined;
+              let average: number | undefined = parseFloat(
+                this.parser
+                  .removeTagsHtml(valueCells.eq(j).html())
+                  .replace(/,/g, '.')
+              );
+              if (isNaN(average)) average = undefined;
 
-            if (gradesSumOfGrades.length > 0 && gradesWeighted.length > 0) {
-              throw new Error('SIGAA: Invalid grade type.');
-            }
-            if (type === 'sum-of-grades') {
-              grades.push({
-                name: gradeGroupName,
-                value: average,
-                grades: gradesSumOfGrades,
-                type
-              });
-            } else if (type === 'weighted-average') {
-              grades.push({
-                name: gradeGroupName,
-                value: average,
-                grades: gradesWeighted,
-                type
-              });
+              if (gradesSumOfGrades.length > 0 && gradesWeighted.length > 0) {
+                throw new Error('SIGAA: Invalid grade type.');
+              }
+              if (type === 'sum-of-grades') {
+                grades.push({
+                  name: gradeGroupName,
+                  value: average,
+                  grades: gradesSumOfGrades,
+                  type
+                });
+              } else if (type === 'weighted-average') {
+                grades.push({
+                  name: gradeGroupName,
+                  value: average,
+                  grades: gradesWeighted,
+                  type
+                });
+              }
             }
           }
         }
       }
+      return grades;
+    } catch (error) {
+      if (retry) {
+        return this.getGrades(false);
+      } else {
+        throw error;
+      }
     }
-    return grades;
   }
 
   /**

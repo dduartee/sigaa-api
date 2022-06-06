@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ActivityTypeHomework | sigaa-api</title>
+	<title>GenericAttachmentData | sigaa-api</title>
 	<meta name="description" content="Documentation for sigaa-api">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">sigaa-api</a>
 				</li>
 				<li>
-					<a href="ActivityTypeHomework.html">ActivityTypeHomework</a>
+					<a href="GenericAttachmentData.html">GenericAttachmentData</a>
 				</li>
 			</ul>
-			<h1>Interface ActivityTypeHomework</h1>
+			<h1>Interface GenericAttachmentData</h1>
 		</div>
 	</div>
 </header>
@@ -69,7 +69,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ActivityTypeHomework</span>
+						<a href="UpdatableResourceData.html" class="tsd-signature-type" data-tsd-kind="Interface">UpdatableResourceData</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">GenericAttachmentData</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -80,11 +85,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ActivityTypeHomework.html#course" class="tsd-kind-icon">course</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ActivityTypeHomework.html#date" class="tsd-kind-icon">date</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ActivityTypeHomework.html#done" class="tsd-kind-icon">done</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ActivityTypeHomework.html#homework" class="tsd-kind-icon">homework</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ActivityTypeHomework.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="GenericAttachmentData.html#description" class="tsd-kind-icon">description</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="GenericAttachmentData.html#form" class="tsd-kind-icon">form</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="GenericAttachmentData.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="GenericAttachmentData.html#instanceIndentifier" class="tsd-kind-icon">instance<wbr>Indentifier</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="GenericAttachmentData.html#title" class="tsd-kind-icon">title</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,52 +98,53 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="course" class="tsd-anchor"></a>
-					<h3>course</h3>
-					<div class="tsd-signature tsd-kind-icon">course<span class="tsd-signature-symbol">:</span> <a href="CourseStudent.html" class="tsd-signature-type" data-tsd-kind="Interface">CourseStudent</a></div>
+					<a name="description" class="tsd-anchor"></a>
+					<h3>description</h3>
+					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/bonds/sigaa-student-bond.ts#L40">src/bonds/sigaa-student-bond.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L19">src/courses/sigaa-lesson-parser.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="date" class="tsd-anchor"></a>
-					<h3>date</h3>
-					<div class="tsd-signature tsd-kind-icon">date<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
+					<a name="form" class="tsd-anchor"></a>
+					<h3>form</h3>
+					<div class="tsd-signature tsd-kind-icon">form<span class="tsd-signature-symbol">:</span> <a href="SigaaForm.html" class="tsd-signature-type" data-tsd-kind="Interface">SigaaForm</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/bonds/sigaa-student-bond.ts#L42">src/bonds/sigaa-student-bond.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L20">src/courses/sigaa-lesson-parser.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="done" class="tsd-anchor"></a>
-					<h3>done</h3>
-					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/bonds/sigaa-student-bond.ts#L43">src/bonds/sigaa-student-bond.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L21">src/courses/sigaa-lesson-parser.ts:21</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="instanceIndentifier" class="tsd-anchor"></a>
+					<h3>instance<wbr>Indentifier</h3>
+					<div class="tsd-signature tsd-kind-icon">instance<wbr>Indentifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="UpdatableResourceData.html">UpdatableResourceData</a>.<a href="UpdatableResourceData.html#instanceIndentifier">instanceIndentifier</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/resources/sigaa-resource-manager.ts#L7">src/resources/sigaa-resource-manager.ts:7</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="homework" class="tsd-anchor"></a>
-					<h3>homework</h3>
-					<div class="tsd-signature tsd-kind-icon">homework<span class="tsd-signature-symbol">:</span> <a href="Homework.html" class="tsd-signature-type" data-tsd-kind="Interface">Homework</a></div>
+					<a name="title" class="tsd-anchor"></a>
+					<h3>title</h3>
+					<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/bonds/sigaa-student-bond.ts#L41">src/bonds/sigaa-student-bond.ts:41</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="type" class="tsd-anchor"></a>
-					<h3>type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;homework&quot;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/bonds/sigaa-student-bond.ts#L39">src/bonds/sigaa-student-bond.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L18">src/courses/sigaa-lesson-parser.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -157,22 +163,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="ActivityTypeHomework.html" class="tsd-kind-icon">Activity<wbr>Type<wbr>Homework</a>
+						<a href="GenericAttachmentData.html" class="tsd-kind-icon">Generic<wbr>Attachment<wbr>Data</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ActivityTypeHomework.html#course" class="tsd-kind-icon">course</a>
+								<a href="GenericAttachmentData.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ActivityTypeHomework.html#date" class="tsd-kind-icon">date</a>
+								<a href="GenericAttachmentData.html#form" class="tsd-kind-icon">form</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ActivityTypeHomework.html#done" class="tsd-kind-icon">done</a>
+								<a href="GenericAttachmentData.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="GenericAttachmentData.html#instanceIndentifier" class="tsd-kind-icon">instance<wbr>Indentifier</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ActivityTypeHomework.html#homework" class="tsd-kind-icon">homework</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ActivityTypeHomework.html#type" class="tsd-kind-icon">type</a>
+								<a href="GenericAttachmentData.html#title" class="tsd-kind-icon">title</a>
 							</li>
 						</ul>
 					</li>

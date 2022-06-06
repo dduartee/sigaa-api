@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>LessonParser | sigaa-api</title>
+	<title>TextAttachment | sigaa-api</title>
 	<meta name="description" content="Documentation for sigaa-api">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">sigaa-api</a>
 				</li>
 				<li>
-					<a href="LessonParser.html">LessonParser</a>
+					<a href="TextAttachment.html">TextAttachment</a>
 				</li>
 			</ul>
-			<h1>Interface LessonParser</h1>
+			<h1>Interface TextAttachment</h1>
 		</div>
 	</div>
 </header>
@@ -69,14 +69,8 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">LessonParser</span>
+						<span class="target">TextAttachment</span>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implemented by</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../classes/SigaaLessonParser.html" class="tsd-signature-type" data-tsd-kind="Class">SigaaLessonParser</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -84,41 +78,36 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="LessonParser.html#parseLessonPages" class="tsd-kind-icon">parse<wbr>Lesson<wbr>Pages</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="TextAttachment.html#body" class="tsd-kind-icon">body</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="TextAttachment.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="parseLessonPages" class="tsd-anchor"></a>
-					<h3>parse<wbr>Lesson<wbr>Pages</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">parse<wbr>Lesson<wbr>Pages<span class="tsd-signature-symbol">(</span>pageLessonsList<span class="tsd-signature-symbol">: </span><a href="Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a>, pageLessonsPaged<span class="tsd-signature-symbol">: </span><a href="Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L47">src/courses/sigaa-lesson-parser.ts:47</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>pageLessonsList: <a href="Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a></h5>
-								</li>
-								<li>
-									<h5>pageLessonsPaged: <a href="Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="body" class="tsd-anchor"></a>
+					<h3>body</h3>
+					<div class="tsd-signature tsd-kind-icon">body<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L29">src/courses/sigaa-lesson-parser.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;text&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/courses/sigaa-lesson-parser.ts#L28">src/courses/sigaa-lesson-parser.ts:28</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -135,10 +124,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="LessonParser.html" class="tsd-kind-icon">Lesson<wbr>Parser</a>
+						<a href="TextAttachment.html" class="tsd-kind-icon">Text<wbr>Attachment</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="LessonParser.html#parseLessonPages" class="tsd-kind-icon">parse<wbr>Lesson<wbr>Pages</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="TextAttachment.html#body" class="tsd-kind-icon">body</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="TextAttachment.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>

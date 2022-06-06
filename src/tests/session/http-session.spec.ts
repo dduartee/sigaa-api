@@ -1,16 +1,19 @@
-import { SigaaHTTPSession } from '@session/sigaa-http-session';
+import { Request, SigaaHTTPSession } from '@session/sigaa-http-session';
 import { SigaaHTTP } from '@session/sigaa-http';
-import { SigaaPage } from '@session/sigaa-page';
+import { Page, SigaaPage } from '@session/sigaa-page';
 import { SigaaPageCache } from '@session/sigaa-page-cache';
 import { SigaaCookiesController } from '@session/sigaa-cookies-controller';
+import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
 
 const createHTTPInstance = () => {
   const sigaaCookiesController = new SigaaCookiesController();
   const pageCache = new SigaaPageCache();
+  const requestStackController = new SigaaRequestStack<Request, Page>();
   const httpSession = new SigaaHTTPSession(
     'http://sigaa.ifsc.edu.br',
     sigaaCookiesController,
-    pageCache
+    pageCache,
+    requestStackController
   );
   return { http: new SigaaHTTP(httpSession), httpSession: httpSession };
 };

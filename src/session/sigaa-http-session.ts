@@ -1,7 +1,7 @@
 import { URL } from 'url';
 
 import { isEqual } from 'lodash';
-import { RequestStacks, SigaaRequestStack } from '@helpers/sigaa-request-stack';
+import { RequestStacks } from '@helpers/sigaa-request-stack';
 import {
   HTTPRequestOptions,
   ProgressCallback,
@@ -10,6 +10,7 @@ import {
 import { Page, SigaaPage } from './sigaa-page';
 import { PageCache } from './sigaa-page-cache';
 import { CookiesController } from './sigaa-cookies-controller';
+import { RequestStackController } from '../helpers/sigaa-request-stack';
 
 /**
  * Manage a http session
@@ -134,7 +135,7 @@ export class SigaaHTTPSession implements HTTPSession {
     public url: string,
     private cookiesController: CookiesController,
     private pageCache: PageCache,
-    private sigaaRequestStack = new SigaaRequestStack<Request, Page>()
+    private requestStack: RequestStackController<Request, Page>
   ) {}
 
   /**
@@ -157,7 +158,7 @@ export class SigaaHTTPSession implements HTTPSession {
   }
 
   get requestStacks(): RequestStacks<Request, Page> {
-    return this.sigaaRequestStack.getStacksByDomain(this.url);
+    return this.requestStack.getStacksByDomain(this.url);
   }
 
   private requestPromises: RequestPromiseTracker[] = [];

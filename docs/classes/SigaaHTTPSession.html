@@ -125,13 +125,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>SigaaHTTPSession<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, cookiesController<span class="tsd-signature-symbol">: </span><a href="../interfaces/CookiesController.html" class="tsd-signature-type" data-tsd-kind="Interface">CookiesController</a>, pageCache<span class="tsd-signature-symbol">: </span><a href="../interfaces/PageCache.html" class="tsd-signature-type" data-tsd-kind="Interface">PageCache</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SigaaHTTPSession.html" class="tsd-signature-type" data-tsd-kind="Class">SigaaHTTPSession</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>SigaaHTTPSession<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, cookiesController<span class="tsd-signature-symbol">: </span><a href="../interfaces/CookiesController.html" class="tsd-signature-type" data-tsd-kind="Interface">CookiesController</a>, pageCache<span class="tsd-signature-symbol">: </span><a href="../interfaces/PageCache.html" class="tsd-signature-type" data-tsd-kind="Interface">PageCache</a>, requestStack<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestStackController</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Request.html" class="tsd-signature-type" data-tsd-kind="Interface">Request</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SigaaHTTPSession.html" class="tsd-signature-type" data-tsd-kind="Class">SigaaHTTPSession</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L136">src/session/sigaa-http-session.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L134">src/session/sigaa-http-session.ts:134</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -150,6 +150,9 @@
 								<li>
 									<h5>pageCache: <a href="../interfaces/PageCache.html" class="tsd-signature-type" data-tsd-kind="Interface">PageCache</a></h5>
 								</li>
+								<li>
+									<h5>requestStack: <span class="tsd-signature-type">RequestStackController</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Request.html" class="tsd-signature-type" data-tsd-kind="Interface">Request</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="SigaaHTTPSession.html" class="tsd-signature-type" data-tsd-kind="Class">SigaaHTTPSession</a></h4>
 						</li>
@@ -164,7 +167,7 @@
 					<div class="tsd-signature tsd-kind-icon">request<wbr>Promises<span class="tsd-signature-symbol">:</span> <a href="../interfaces/RequestPromiseTracker.html" class="tsd-signature-type" data-tsd-kind="Interface">RequestPromiseTracker</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L165">src/session/sigaa-http-session.ts:165</a></li>
+							<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L164">src/session/sigaa-http-session.ts:164</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -188,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L161">src/session/sigaa-http-session.ts:161</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L160">src/session/sigaa-http-session.ts:160</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RequestStacks</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Request.html" class="tsd-signature-type" data-tsd-kind="Interface">Request</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/Page.html" class="tsd-signature-type" data-tsd-kind="Interface">Page</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -209,7 +212,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#afterDownloadRequest">afterDownloadRequest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L145">src/session/sigaa-http-session.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L144">src/session/sigaa-http-session.ts:144</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -248,7 +251,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#afterHTTPOptions">afterHTTPOptions</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L244">src/session/sigaa-http-session.ts:244</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L243">src/session/sigaa-http-session.ts:243</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -281,7 +284,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#afterSuccessfulRequest">afterSuccessfulRequest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L212">src/session/sigaa-http-session.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L211">src/session/sigaa-http-session.ts:211</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -313,7 +316,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#afterUnsuccessfulRequest">afterUnsuccessfulRequest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L177">src/session/sigaa-http-session.ts:177</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L176">src/session/sigaa-http-session.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -348,7 +351,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#beforeDownloadRequest">beforeDownloadRequest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L157">src/session/sigaa-http-session.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L156">src/session/sigaa-http-session.ts:156</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -371,7 +374,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#beforeRequest">beforeRequest</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L261">src/session/sigaa-http-session.ts:261</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L260">src/session/sigaa-http-session.ts:260</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -413,7 +416,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#close">close</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L310">src/session/sigaa-http-session.ts:310</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L309">src/session/sigaa-http-session.ts:309</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -435,7 +438,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L195">src/session/sigaa-http-session.ts:195</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L194">src/session/sigaa-http-session.ts:194</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -465,7 +468,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/HTTPSession.html">HTTPSession</a>.<a href="../interfaces/HTTPSession.html#getURL">getURL</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/a23c3f1/src/session/sigaa-http-session.ts#L170">src/session/sigaa-http-session.ts:170</a></li>
+									<li>Defined in <a href="https://github.com/GeovaneSchmitz/sigaa-api/blob/208e7e3/src/session/sigaa-http-session.ts#L169">src/session/sigaa-http-session.ts:169</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

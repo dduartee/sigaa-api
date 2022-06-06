@@ -43,6 +43,11 @@ import {
   ActivityFactory,
   SigaaActivityFactory
 } from '@activity/sigaa-activity-factory';
+import { RequestStackController } from '@helpers/sigaa-request-stack';
+import { Request } from '@session/sigaa-http-session';
+import { Page } from '@session/sigaa-page';
+import { CookiesController } from '@session/sigaa-cookies-controller';
+import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
 
 /**
  * @category Internal
@@ -55,6 +60,8 @@ interface SigaaCommonConstructorOptions {
 interface SigaaConstructorURL {
   url: string;
   bondController?: BondController;
+  cookiesController?: CookiesController;
+  requestStackController?: RequestStackController<Request, Page>;
 }
 
 interface WithAccountFactory {
@@ -159,11 +166,30 @@ export class Sigaa {
     }
 
     if ('url' in options && options.url) {
-      const cookiesController = new SigaaCookiesController();
+      let cookiesController: CookiesController;
+
+      if ('cookiesController' in options && options.cookiesController) {
+        cookiesController = options.cookiesController;
+      } else {
+        cookiesController = new SigaaCookiesController();
+      }
+
+      let requestStackController: RequestStackController<Request, Page>;
+
+      if (
+        'requestStackController' in options &&
+        options.requestStackController
+      ) {
+        requestStackController = options.requestStackController;
+      } else {
+        requestStackController = new SigaaRequestStack<Request, Page>();
+      }
+
       this.httpSession = new SigaaHTTPSession(
         options.url,
         cookiesController,
-        pageCache
+        pageCache,
+        requestStackController
       );
 
       const bondController =
