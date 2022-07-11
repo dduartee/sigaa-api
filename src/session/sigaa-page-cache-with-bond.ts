@@ -33,8 +33,11 @@ export class SigaaPageCacheWithBond implements PageCacheWithBond {
    */
   private currentBond: null | string = null;
 
-  constructor(private cachePageFactory: PageCacheFactory) {
-    this.currentCache = this.cachePageFactory.createPageCache();
+  constructor(
+    private cachePageFactory: PageCacheFactory,
+    private timeoutCache?: number
+  ) {
+    this.currentCache = this.cachePageFactory.createPageCache(timeoutCache);
     this.cacheInstances.set(null, this.currentCache);
   }
 
@@ -48,7 +51,9 @@ export class SigaaPageCacheWithBond implements PageCacheWithBond {
       if (oldCacheInstance) {
         this.currentCache = oldCacheInstance;
       } else {
-        const newCacheInstance = this.cachePageFactory.createPageCache();
+        const newCacheInstance = this.cachePageFactory.createPageCache(
+          this.timeoutCache
+        );
         this.cacheInstances.set(bondSwitchURLstring, newCacheInstance);
         this.currentCache = newCacheInstance;
       }
