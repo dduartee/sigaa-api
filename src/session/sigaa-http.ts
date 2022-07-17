@@ -484,9 +484,19 @@ export class SigaaHTTP implements HTTP {
     body?: string | Buffer
   ): Promise<HTTPResponse> {
     return new Promise((resolve, reject) => {
-      const req = HTTPRequest(optionsHTTP, (response) => {
-        resolve(this.parserResponse(response));
-      });
+      const req = HTTPRequest(
+        {
+          ...optionsHTTP,
+          ca: [
+            fs.readFileSync(
+              path.join(__dirname, '..', 'certs', 'ifsc-edu-br-chain.pem')
+            )
+          ]
+        },
+        (response) => {
+          resolve(this.parserResponse(response));
+        }
+      );
 
       req.on('error', (err) => {
         reject(err);
