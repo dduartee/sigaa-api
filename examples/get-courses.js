@@ -15,12 +15,12 @@ const main = async () => {
    * O usuário pode ter mais de um vínculo
    * @see https://github.com/GeovaneSchmitz/sigaa-api/issues/4
    **/
-  const bonds = await account.getActiveBonds();
+  const bonds = await account.getActiveBonds()
   
   //Para cada vínculo
   for (const bond of bonds) {
     if (bond.type !== 'student') continue; // O tipo pode ser student ou teacher
-
+    
     
     //Se o tipo do vínculo for student, então tem matrícula e curso
     console.log('Matrícula do vínculo: ' + bond.registration);
@@ -28,6 +28,9 @@ const main = async () => {
 
     const period = await bond.getCurrentPeriod();
     console.log('Período do vínculo: ' + period);
+
+    const campus = await bond.getCampus();
+    console.log('Campus do vínculo: ' + campus);
 
     // Se for usado bond.getCourses(true); todas as turmas são retornadas, incluindo turmas de outros semestres
     const courses = await bond.getCourses();
