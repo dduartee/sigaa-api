@@ -23,11 +23,14 @@ const main = async () => {
     
     
     //Se o tipo do vínculo for student, então tem matrícula e curso
-    console.log('Matrícula do vínculo: ' + bond.registration);
-    console.log('Curso do vínculo: ' + bond.program);
+    console.log(`Matrícula do vínculo: ${bond.registration}`);
+    console.log(`Curso do vínculo: ${bond.program}`);
 
     const period = await bond.getCurrentPeriod();
-    console.log('Período do vínculo: ' + period);
+    console.log(`Período do vínculo: ${period}`);
+
+    const campus = await bond.getCampus();
+    console.log(`Campus do vínculo: ${campus}`);
 
     const campus = await bond.getCampus();
     console.log('Campus do vínculo: ' + campus);

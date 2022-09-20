@@ -316,8 +316,7 @@ export class SigaaStudentBond implements StudentBond {
     const frontPage = await this.http.get(
       '/sigaa/portais/discente/discente.jsf'
     );
-    const campus =
-      this.parser.removeTagsHtml(frontPage.$('p.unidade').html()) || '';
+    const campus = this.parser.removeTagsHtml(frontPage.$('p.unidade').html());
     this._campus = campus;
     return campus;
   }
