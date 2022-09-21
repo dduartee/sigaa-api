@@ -26,12 +26,17 @@ export interface SubGradeSumOfGrades extends SubGrade {
 export interface SubGradeWeightedAverage extends SubGrade {
   weight: number;
 }
-
+export type SubGradeArithmeticAverage = SubGrade;
 /**
  * @category Public
  */
 export interface GradeGroupOnlyAverage extends Grade {
   type: 'only-average';
+}
+
+export interface GradeGroupArithmeticAverage extends Grade {
+  grades: SubGradeArithmeticAverage[];
+  type: 'arithmetic-average';
 }
 
 /**
@@ -56,4 +61,5 @@ export interface GradeGroupSumOfGrades extends Grade {
 export type GradeGroup =
   | GradeGroupSumOfGrades
   | GradeGroupOnlyAverage
-  | GradeGroupWeightedAverage;
+  | GradeGroupWeightedAverage
+  | GradeGroupArithmeticAverage;

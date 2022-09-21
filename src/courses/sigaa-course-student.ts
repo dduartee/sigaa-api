@@ -17,6 +17,7 @@ import { LessonParserFactory } from './sigaa-lesson-parser-factory';
 
 import {
   GradeGroup,
+  SubGradeArithmeticAverage,
   SubGradeSumOfGrades,
   SubGradeWeightedAverage
 } from '@courseResources/sigaa-grades-student';
@@ -1146,7 +1147,27 @@ export class SigaaCourseStudent implements CourseStudent {
           theadElements[0].eq(i).attr('colspan') || '1',
           10
         );
-        if (theadElementColspan === 1) {
+        let type:
+          | 'weighted-average'
+          | 'arithmetic-average'
+          | 'sum-of-grades'
+          | 'only-average';
+        const gradeType = page.$(`#tipoUnid${i}`).val();
+        switch (gradeType) {
+          case 'P':
+            type = 'weighted-average';
+            break;
+          case 'A':
+            type = 'arithmetic-average';
+            break;
+          case 'S':
+            type = 'sum-of-grades';
+            break;
+          default:
+            type = 'only-average';
+            break;
+        }
+        if (type === 'only-average' || theadElementColspan == 1) {
           const valueString = this.parser
             .removeTagsHtml(valueCells.eq(index).html())
             .replace(/,/g, '.');
@@ -1160,9 +1181,10 @@ export class SigaaCourseStudent implements CourseStudent {
             type: 'only-average'
           });
         } else {
-          let type = 'weighted-average';
           const gradesSumOfGrades: SubGradeSumOfGrades[] = [];
           const gradesWeighted: SubGradeWeightedAverage[] = [];
+          const gradesArithmetic: SubGradeArithmeticAverage[] = [];
+
           for (let j = index; j < index + theadElementColspan; j++) {
             const fullId = theadElements[1].eq(j).attr('id');
             if (!fullId) throw new Error('SIGAA: Grade without id.');
@@ -1171,39 +1193,38 @@ export class SigaaCourseStudent implements CourseStudent {
             if (gradeId !== '') {
               const gradeName = page.$(`input#denAval_${gradeId}`).val();
               const gradeCode = page.$(`input#abrevAval_${gradeId}`).val();
-              const maxValue = parseFloat(
-                page.$(`input#notaAval_${gradeId}`).val()
-              );
-
-              const gradeWeight = parseFloat(
-                page.$(`input#pesoAval_${gradeId}`).val()
-              );
 
               let value: number | undefined = parseFloat(
                 this.parser
                   .removeTagsHtml(valueCells.eq(j).html())
                   .replace(/,/g, '.')
               );
-
-              if (!isNaN(gradeWeight)) {
-                type = 'weighted-average';
-              }
-              if (!isNaN(maxValue)) {
-                type = 'sum-of-grades';
-              }
               if (!value && value !== 0) value = undefined;
+
               if (type === 'sum-of-grades') {
+                const maxValue = parseFloat(
+                  page.$(`input#notaAval_${gradeId}`).val()
+                );
                 gradesSumOfGrades.push({
                   name: gradeName,
                   code: gradeCode,
                   maxValue: maxValue,
                   value
                 });
-              } else {
+              } else if (type === 'weighted-average') {
+                const gradeWeight = parseFloat(
+                  page.$(`input#pesoAval_${gradeId}`).val()
+                );
                 gradesWeighted.push({
                   name: gradeName,
                   code: gradeCode,
                   weight: gradeWeight,
+                  value
+                });
+              } else if (type === 'arithmetic-average') {
+                gradesArithmetic.push({
+                  name: gradeName,
+                  code: gradeCode,
                   value
                 });
               }
@@ -1215,7 +1236,11 @@ export class SigaaCourseStudent implements CourseStudent {
               );
               if (isNaN(average)) average = undefined;
 
-              if (gradesSumOfGrades.length > 0 && gradesWeighted.length > 0) {
+              if (
+                gradesSumOfGrades.length > 0 &&
+                gradesWeighted.length > 0 &&
+                gradesArithmetic.length > 0
+              ) {
                 throw new Error('SIGAA: Invalid grade type.');
               }
               if (type === 'sum-of-grades') {
@@ -1223,14 +1248,21 @@ export class SigaaCourseStudent implements CourseStudent {
                   name: gradeGroupName,
                   value: average,
                   grades: gradesSumOfGrades,
-                  type
+                  type: 'sum-of-grades'
                 });
               } else if (type === 'weighted-average') {
                 grades.push({
                   name: gradeGroupName,
                   value: average,
                   grades: gradesWeighted,
-                  type
+                  type: 'weighted-average'
+                });
+              } else if (type === 'arithmetic-average') {
+                grades.push({
+                  name: gradeGroupName,
+                  value: average,
+                  grades: gradesArithmetic,
+                  type: 'arithmetic-average'
                 });
               }
             }
