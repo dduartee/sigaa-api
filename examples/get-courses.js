@@ -32,9 +32,6 @@ const main = async () => {
     const campus = await bond.getCampus();
     console.log(`Campus do vínculo: ${campus}`);
 
-    const campus = await bond.getCampus();
-    console.log('Campus do vínculo: ' + campus);
-
     // Se for usado bond.getCourses(true); todas as turmas são retornadas, incluindo turmas de outros semestres
     const courses = await bond.getCourses();
 
