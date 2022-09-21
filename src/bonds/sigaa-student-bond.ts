@@ -34,6 +34,8 @@ export interface StudentBond {
   getActivities(): Promise<Activity[]>;
 
   getCurrentPeriod(): Promise<string>;
+
+  getCampus(): Promise<string>;
 }
 export interface ActivityTypeHomework {
   type: 'homework';
