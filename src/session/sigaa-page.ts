@@ -252,13 +252,32 @@ export class SigaaPage implements Page {
    * @inheritdoc
    */
   parseJSFCLJS(javaScriptCode: string): SigaaForm {
-    if (!javaScriptCode.includes('getElementById'))
-      throw new Error('SIGAA: Form not found.');
+    let formQuery;
+    let postValuesString;
+    if (javaScriptCode.includes('getElementById')) {
+      formQuery = javaScriptCode.replace(
+        /if([\S\s]*?)getElementById\('|'([\S\s]*?)false/gm,
+        ''
+      );
+      postValuesString = `{${javaScriptCode
+        .replace(/if([\S\s]*?),{|},([\S\s]*?)false/gm, '')
+        .replace(/"/gm, '\\"')
+        .replace(/'/gm, '"')}}`;
+    } else if (javaScriptCode.includes('forms')) {
+      // Para IFPR
+      formQuery = javaScriptCode.replace(
+        /if([\S\s]*?)forms\['|'([\S\s]*?)false/gm,
+        ''
+      );
+      const postValue = `${javaScriptCode
+        .replace(/if([\S\s]*?),|,([\S\s]*?)false/gm, '')
+        .replace(/"/gm, '\\"')
+        .replace(/'/gm, '"')}"`;
 
-    const formQuery = javaScriptCode.replace(
-      /if([\S\s]*?)getElementById\('|'([\S\s]*?)false/gm,
-      ''
-    );
+      postValuesString = `{${postValue}:${postValue}}`;
+    } else {
+      throw new Error('SIGAA: Form not found.');
+    }
 
     const formEl = this.$(`#${formQuery}`);
     if (!formEl) {
@@ -279,11 +298,6 @@ export class SigaaPage implements Page {
         postValues[name] = value;
       }
     });
-
-    const postValuesString = `{${javaScriptCode
-      .replace(/if([\S\s]*?),{|},([\S\s]*?)false/gm, '')
-      .replace(/"/gm, '\\"')
-      .replace(/'/gm, '"')}}`;
 
     return {
       action,

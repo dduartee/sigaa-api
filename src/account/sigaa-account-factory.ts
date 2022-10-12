@@ -4,6 +4,7 @@ import { HTTP } from '@session/sigaa-http';
 import { Page } from '@session/sigaa-page';
 import { Session } from '@session/sigaa-session';
 import { Account } from './sigaa-account';
+import { SigaaAccountIFPR } from './sigaa-account-ifpr';
 import { SigaaAccountIFSC } from './sigaa-account-ifsc';
 import { SigaaAccountUFPB } from './sigaa-account-ufpb';
 
@@ -38,6 +39,14 @@ export class SigaaAccountFactory implements AccountFactory {
   async getAccount(page: Page): Promise<Account> {
     if (this.session.institution === 'UFPB') {
       return new SigaaAccountUFPB(
+        page,
+        this.http,
+        this.parser,
+        this.session,
+        this.bondFactory
+      );
+    } else if (this.session.institution === 'IFPR') {
+      return new SigaaAccountIFPR(
         page,
         this.http,
         this.parser,
