@@ -35,6 +35,7 @@ const main = async () => {
       const absencesCourse = await course.getAbsence();
       console.log('Número máximo de faltas: ' + absencesCourse.maxAbsences);
       console.log('Número total de faltas: ' + absencesCourse.totalAbsences);
+      console.log('Número total de aulas: ' + absencesCourse.totalClasses);
       // absencesCourse.list é um objeto com a data e quantidade de faltas no dia
       console.table(absencesCourse.list);
     }

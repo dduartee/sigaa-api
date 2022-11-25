@@ -603,6 +603,7 @@ export class SigaaCourseStudent implements CourseStudent {
     const table = page.$('.listing');
     const absences: AbsenceDay[] = [];
     const rows = table.find('tr[class]').toArray();
+    const totalClasses = rows.length;
     for (const row of rows) {
       const cells = page.$(row).children();
       const date = this.parser.removeTagsHtml(cells.first().html());
@@ -640,7 +641,8 @@ export class SigaaCourseStudent implements CourseStudent {
     return {
       list: absences,
       totalAbsences,
-      maxAbsences
+      maxAbsences,
+      totalClasses
     };
   }
 

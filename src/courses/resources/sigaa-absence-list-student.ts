@@ -13,4 +13,5 @@ export interface AbsenceList {
   list: AbsenceDay[];
   totalAbsences: number;
   maxAbsences: number;
+  totalClasses: number;
 }
