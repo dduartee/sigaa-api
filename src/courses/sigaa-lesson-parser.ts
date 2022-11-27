@@ -100,7 +100,15 @@ export class SigaaLessonParser implements LessonParser {
 
   parseLessonPages(pageLessonsList: Page, pageLessonsPaged: Page): void {
     const lessonsElements = this.getElements(pageLessonsList);
-
+    lessonsElements.map((lessonElement) => {
+      const subElements = pageLessonsList
+        .$(lessonElement)
+        .find('.topico-aula')
+        .toArray();
+      subElements.map((subElement) => {
+        lessonsElements.splice(lessonsElements.indexOf(subElement), 1);
+      });
+    });
     const lessonIdsWithReferences = this.parsePagedPage(pageLessonsPaged);
     this.resources.lessons.keepOnly(
       lessonsElements.map(
@@ -144,7 +152,7 @@ export class SigaaLessonParser implements LessonParser {
       titleFull.lastIndexOf('(') + 1,
       titleFull.lastIndexOf(')')
     );
-
+    
     const [startDate, endDate] = this.parserDate(lessonDatesString);
 
     const title = titleFull.slice(0, titleFull.lastIndexOf('(')).trim();
@@ -253,6 +261,8 @@ export class SigaaLessonParser implements LessonParser {
             this.forumsIdIndex++;
             const forum = this.resources.forums.upsert(forumOptions);
             lessonAttachments.push(forum);
+            // eslint-disable-next-line no-empty
+          } else if (iconSrc.includes('user_comment.png')) {
           } else if (iconSrc.includes('portal_turma/site_add.png')) {
             const link = this.parseAttachmentLink(page, attachmentElement);
             lessonAttachments.push(link);
@@ -416,8 +426,8 @@ export class SigaaLessonParser implements LessonParser {
         .find('span[id] > span[id]');
       title = this.parser.removeTagsHtml(titleElement.html());
       const srcIframe = page.$(attachmentElement).find('iframe').attr('src');
-      if (!srcIframe) throw new Error('SIGAA: Video iframe without url.');
-      src = srcIframe;
+      if (!srcIframe) src = '';
+      else src = srcIframe;
     }
 
     return {
