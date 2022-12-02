@@ -12,6 +12,7 @@ import {
   UpdatableResource,
   UpdatableResourceCallback
 } from '@resources/updatable-resource';
+import { HyperlinkAttachment } from '@attachments/sigaa-hyperlink-student';
 
 /**
  * @category Public
@@ -24,6 +25,7 @@ export type Attachment =
   | WebContent
   | Survey
   | LinkAttachment
+  | HyperlinkAttachment
   | VideoAttachment;
 
 /**
