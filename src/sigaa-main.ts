@@ -9,6 +9,7 @@ import { HTTPFactory, SigaaHTTPFactory } from '@session/sigaa-http-factory';
 import { Login } from '@session/login/sigaa-login';
 import { SigaaLoginIFSC } from '@session/login/sigaa-login-ifsc';
 import { SigaaLoginUFPB } from '@session/login/sigaa-login-ufpb';
+import { SigaaLoginUFRB } from '@session/login/sigaa-login-ufrb';
 import { InstitutionType, Session, SigaaSession } from '@session/sigaa-session';
 import { SigaaCookiesController } from '@session/sigaa-cookies-controller';
 import { SigaaPageCacheWithBond } from '@session/sigaa-page-cache-with-bond';
@@ -294,10 +295,17 @@ export class Sigaa {
       );
     }
 
-    this.loginInstance =
-      options.login || options.institution === 'UFPB'
-        ? new SigaaLoginUFPB(this.http, this.session)
-        : new SigaaLoginIFSC(this.http, this.session);
+    if (options.login) this.loginInstance = options.login;
+    else {
+      const SigaaLoginInstitution = {
+        UFPB: SigaaLoginUFPB,
+        IFSC: SigaaLoginIFSC,
+        UFRB: SigaaLoginUFRB
+      }[options.institution || 'IFSC'];
+      if (!SigaaLoginInstitution)
+        throw new Error('SIGAA: Invalid institution parameter.');
+      this.loginInstance = new SigaaLoginInstitution(this.http, this.session);
+    }
   }
 
   /**

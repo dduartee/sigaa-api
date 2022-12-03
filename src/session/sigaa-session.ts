@@ -4,7 +4,7 @@ import { LoginStatus } from '../sigaa-types';
  * The institution serves to adjust interactions with SIGAA.
  * @category Public
  */
-export type InstitutionType = 'IFSC' | 'UFPB';
+export type InstitutionType = 'IFSC' | 'UFPB' | 'UFRB';
 
 /**
  * Sigaa session control

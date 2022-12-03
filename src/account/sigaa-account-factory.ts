@@ -6,6 +6,7 @@ import { Session } from '@session/sigaa-session';
 import { Account } from './sigaa-account';
 import { SigaaAccountIFSC } from './sigaa-account-ifsc';
 import { SigaaAccountUFPB } from './sigaa-account-ufpb';
+import { SigaaAccountUFRB } from './sigaa-account-ufrb';
 
 /**
  * Abstraction to represent the class that instantiates the account.
@@ -33,25 +34,21 @@ export class SigaaAccountFactory implements AccountFactory {
   ) {}
   /**
    * Creates a new instance of Account.
-   * @param page home page of account (page after login).
+   * @param homepage homepage of account (page after login).
    */
-  async getAccount(page: Page): Promise<Account> {
-    if (this.session.institution === 'UFPB') {
-      return new SigaaAccountUFPB(
-        page,
-        this.http,
-        this.parser,
-        this.session,
-        this.bondFactory
-      );
-    } else {
-      return new SigaaAccountIFSC(
-        page,
-        this.http,
-        this.parser,
-        this.session,
-        this.bondFactory
-      );
-    }
+  async getAccount(homepage: Page): Promise<Account> {
+    const SigaaAccountInstitution = {
+      UFPB: SigaaAccountUFPB,
+      IFSC: SigaaAccountIFSC,
+      UFRB: SigaaAccountUFRB
+    }[this.session.institution];
+
+    return new SigaaAccountInstitution(
+      homepage,
+      this.http,
+      this.parser,
+      this.session,
+      this.bondFactory
+    );
   }
 }
