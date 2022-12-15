@@ -13,8 +13,12 @@ export class SigaaLoginIFSC implements Login {
   constructor(protected http: HTTP, protected session: Session) {}
   readonly errorInvalidCredentials = 'SIGAA: Invalid credentials.';
 
-  protected parseLoginForm(page: Page): SigaaForm {
-    const formElement = page.$("form[name='loginForm']");
+  protected parseMobileLoginForm(
+    page: Page,
+    username: string,
+    password: string
+  ): SigaaForm {
+    const formElement = page.$('#form-login');
 
     const actionUrl = formElement.attr('action');
     if (!actionUrl) throw new Error('SIGAA: No action form on login page.');
@@ -23,48 +27,62 @@ export class SigaaLoginIFSC implements Login {
 
     const postValues: Record<string, string> = {};
 
-    formElement.find('input').each((index, element) => {
+    let hasInputPassword = false;
+    let hasInputText = false;
+    const inputs = formElement.find('input').toArray();
+
+    for (const element of inputs) {
+      const type = page.$(element).attr('type');
       const name = page.$(element).attr('name');
-      if (name) postValues[name] = page.$(element).val();
-    });
+      if (!name) continue;
+
+      if (type === 'password') {
+        if (hasInputPassword)
+          throw new Error('SIGAA: More than one password input on login form.');
+        hasInputPassword = true;
+        postValues[name] = password;
+      } else if (type === 'text') {
+        if (hasInputText)
+          throw new Error('SIGAA: More than one text input on login form.');
+        hasInputText = true;
+        postValues[name] = username;
+      } else {
+        postValues[name] = page.$(element).val();
+      }
+    }
 
     return { action, postValues };
   }
-
   /**
    * Current login form.
    */
-  protected form?: SigaaForm;
+  protected formPage?: Page;
 
-  /**
-   * Retuns HTML form
-   */
-  async getLoginForm(): Promise<SigaaForm> {
-    if (this.form) {
-      return this.form;
+  async getMobileLoginForm(
+    username: string,
+    password: string
+  ): Promise<SigaaForm> {
+    if (this.formPage) {
+      return this.parseMobileLoginForm(this.formPage, username, password);
     } else {
-      const page = await this.http.get('/sigaa/verTelaLogin.do');
-      return this.parseLoginForm(page);
+      const page = await this.http.get('/sigaa/mobile/touch/login.jsf', {
+        mobile: true
+      });
+      return this.parseMobileLoginForm(page, username, password);
     }
   }
 
-  /**
-   * Start a session on desktop
-   * @param username
-   * @param password
-   */
-  protected async desktopLogin(
+  protected async mobileLogin(
     username: string,
     password: string
   ): Promise<Page> {
-    const { action, postValues } = await this.getLoginForm();
-
-    postValues['user.login'] = username;
-    postValues['user.senha'] = password;
+    const { action, postValues } = await this.getMobileLoginForm(
+      username,
+      password
+    );
     const page = await this.http.post(action.href, postValues);
-    return await this.parseDesktopLoginResult(page);
+    return await this.parseMobileLoginResult(page);
   }
-
   /**
    * Start a session on Sigaa, return login reponse page
    * @param username
@@ -74,8 +92,9 @@ export class SigaaLoginIFSC implements Login {
     if (this.session.loginStatus === LoginStatus.Authenticated)
       throw new Error('SIGAA: This session already has a user logged in.');
     try {
-      const page = await this.desktopLogin(username, password);
-      return this.http.followAllRedirect(page);
+      await this.mobileLogin(username, password);
+      const jumpPage = await this.http.get('/sigaa/paginaInicial.do');
+      return this.http.followAllRedirect(jumpPage);
     } catch (error) {
       if (!retry || error.message === this.errorInvalidCredentials) {
         throw error;
@@ -85,11 +104,11 @@ export class SigaaLoginIFSC implements Login {
     }
   }
 
-  protected async parseDesktopLoginResult(page: Page): Promise<Page> {
+  protected async parseMobileLoginResult(page: Page): Promise<Page> {
     const accountPage = await this.http.followAllRedirect(page);
-    if (accountPage.bodyDecoded.includes('Entrar no Sistema')) {
+    if (accountPage.bodyDecoded.includes('form-login')) {
       if (accountPage.bodyDecoded.includes('Usuário e/ou senha inválidos')) {
-        this.form = await this.parseLoginForm(accountPage);
+        this.formPage = accountPage;
         throw new Error(this.errorInvalidCredentials);
       } else {
         throw new Error('SIGAA: Invalid response after login attempt.');
