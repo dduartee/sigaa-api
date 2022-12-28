@@ -294,10 +294,16 @@ export class Sigaa {
       );
     }
 
-    this.loginInstance =
-      options.login || options.institution === 'UFPB'
-        ? new SigaaLoginUFPB(this.http, this.session)
-        : new SigaaLoginIFSC(this.http, this.session);
+    if (options.login) this.loginInstance = options.login;
+    else {
+      const SigaaLoginInstitution = {
+        UFPB: SigaaLoginUFPB,
+        IFSC: SigaaLoginIFSC
+      }[options.institution || 'IFSC'];
+      if (!SigaaLoginInstitution)
+        throw new Error('SIGAA: Invalid institution parameter.');
+      this.loginInstance = new SigaaLoginInstitution(this.http, this.session);
+    }
   }
 
   /**
