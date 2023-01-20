@@ -3,11 +3,8 @@ import { HTTP } from '@session/sigaa-http';
 import { sharedReturn } from '@helpers/sigaa-shared-return-decorator-factory';
 import { CourseResourcesManagerFactory } from './sigaa-course-resources-manager-factory';
 
-import {
-  CourseStudent,
-  SigaaCourseStudent,
-  CourseStudentData
-} from './sigaa-course-student';
+import { CourseStudent, SigaaCourseStudent } from './sigaa-course-student';
+import type { CourseStudentData } from './sigaa-course-student';
 import { LessonParserFactory } from './sigaa-lesson-parser-factory';
 
 /**
