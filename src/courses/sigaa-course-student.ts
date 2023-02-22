@@ -96,6 +96,7 @@ export interface CourseStudent {
    */
   readonly period: string;
 
+  getCourseForm(): SigaaForm;
   /**
    * Returns the list of lessons.
    */
@@ -233,6 +234,12 @@ export class SigaaCourseStudent implements CourseStudent {
    */
   private currentCoursePage = 'Principal';
 
+  /**
+   * Dados para a requisição de uma página da matéria
+   */
+  getCourseForm(): SigaaForm {
+    return this.form;
+  }
   /**
    * Request the course page using the course ID,
    * it is slower than requestCoursePageUsingForm,
