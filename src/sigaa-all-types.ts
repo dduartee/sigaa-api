@@ -52,6 +52,7 @@ export * from '@search/sigaa-search';
 
 export * from '@session/login/sigaa-login-ifsc';
 export * from '@session/login/sigaa-login-ufpb';
+export * from '@session/login/sigaa-login-unb';
 export * from '@session/login/sigaa-login';
 
 export * from '@session/sigaa-bond-controller';
@@ -64,5 +65,10 @@ export * from '@session/sigaa-http';
 
 export * from '@session/sigaa-page-cache';
 export * from '@session/sigaa-page';
+export * from '@session/page/sigaa-page-ifsc';
+export * from '@session/page/sigaa-page-ufpb';
+export * from '@session/page/sigaa-page-unb';
+
+export * from '@session/sigaa-institution-controller';
 
 export * from '@session/sigaa-session';

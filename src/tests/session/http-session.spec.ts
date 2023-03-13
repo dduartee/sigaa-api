@@ -1,16 +1,19 @@
 import { Request, SigaaHTTPSession } from '@session/sigaa-http-session';
 import { SigaaHTTP } from '@session/sigaa-http';
-import { Page, SigaaPage } from '@session/sigaa-page';
 import { SigaaPageCache } from '@session/sigaa-page-cache';
 import { SigaaCookiesController } from '@session/sigaa-cookies-controller';
 import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
+import { SigaaInstitutionController } from '@session/sigaa-institution-controller';
+import { Page } from '@session/sigaa-page';
+import { SigaaPageIFSC } from '@session/page/sigaa-page-ifsc';
 
 const createHTTPInstance = () => {
   const sigaaCookiesController = new SigaaCookiesController();
   const pageCache = new SigaaPageCache();
   const requestStackController = new SigaaRequestStack<Request, Page>();
+  const institutionController = new SigaaInstitutionController('IFSC', 'https://sigaa.ifsc.edu.br')
   const httpSession = new SigaaHTTPSession(
-    'http://sigaa.ifsc.edu.br',
+    institutionController,
     sigaaCookiesController,
     pageCache,
     requestStackController
@@ -22,7 +25,7 @@ test('if Sigaa http returns a page', async () => {
   const http = createHTTPInstance();
   const page = await http.http.get('/');
 
-  expect(page).toBeInstanceOf(SigaaPage);
+  expect(page).toBeInstanceOf(SigaaPageIFSC);
 
   http.httpSession.close();
 }, 30000);
@@ -90,3 +93,5 @@ test('if Sigaa http return page same request', async () => {
 
   http.httpSession.close();
 }, 10000);
+
+

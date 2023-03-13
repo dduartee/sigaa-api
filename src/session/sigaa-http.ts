@@ -4,13 +4,17 @@ import * as fs from 'fs';
 import * as stream from 'stream';
 import iconv from 'iconv-lite';
 import { FormData } from 'formdata-node';
-import { URL } from 'url';
+
 import { request as HTTPRequest, RequestOptions } from 'https';
 import { createBrotliDecompress, createGunzip, createInflate } from 'zlib';
 import { stringify } from 'querystring';
 import { HTTPMethod } from '../sigaa-types';
 import { HTTPSession } from './sigaa-http-session';
-import { Page, SigaaPage } from './sigaa-page';
+import { Page } from './sigaa-page';
+import { SigaaPageInstitutionMap } from './sigaa-institution-controller';
+import { SigaaPageIFSC } from './page/sigaa-page-ifsc';
+import { SigaaPageUFPB } from './page/sigaa-page-ufpb';
+import { SigaaPageUNB } from './page/sigaa-page-unb';
 
 /**
  * @category Public
@@ -131,7 +135,7 @@ export interface HTTP {
  * @category Internal
  */
 export class SigaaHTTP implements HTTP {
-  constructor(private session: HTTPSession) {}
+  constructor(private httpSession: HTTPSession) {}
 
   /**
    * @inheritdoc
@@ -141,7 +145,7 @@ export class SigaaHTTP implements HTTP {
     basepath: string,
     callback?: ProgressCallback
   ): Promise<string> {
-    const url = this.session.getURL(urlPath);
+    const url = this.httpSession.getURL(urlPath);
     const httpOptions = this.getRequestBasicOptions('GET', url);
     return this.downloadFile(url, basepath, httpOptions, undefined, callback);
   }
@@ -155,7 +159,7 @@ export class SigaaHTTP implements HTTP {
     basepath: string,
     callback?: ProgressCallback
   ): Promise<string> {
-    const url = this.session.getURL(urlPath);
+    const url = this.httpSession.getURL(urlPath);
     const { httpOptions, body } = this.encodePostValue(url, postValues);
     return this.downloadFile(url, basepath, httpOptions, body, callback);
   }
@@ -170,7 +174,7 @@ export class SigaaHTTP implements HTTP {
     body?: string,
     callback?: ProgressCallback
   ): Promise<string> {
-    const sessionHttpOptions = await this.session.afterHTTPOptions(
+    const sessionHttpOptions = await this.httpSession.afterHTTPOptions(
       url,
       httpOptions
     );
@@ -180,7 +184,7 @@ export class SigaaHTTP implements HTTP {
       throw new Error('SIGAA: Download basepath not exists.');
     }
 
-    const suspendRequest = await this.session.beforeDownloadRequest(
+    const suspendRequest = await this.httpSession.beforeDownloadRequest(
       url,
       basepath,
       sessionHttpOptions,
@@ -240,7 +244,7 @@ export class SigaaHTTP implements HTTP {
         reject(err);
       });
     });
-    return this.session.afterDownloadRequest(
+    return this.httpSession.afterDownloadRequest(
       url,
       basepath,
       sessionHttpOptions,
@@ -254,7 +258,7 @@ export class SigaaHTTP implements HTTP {
    * @inheritdoc
    */
   closeSession(): void {
-    this.session.close();
+    this.httpSession.close();
   }
   /**
    * Create object Options for https.request
@@ -301,7 +305,7 @@ export class SigaaHTTP implements HTTP {
     formData: FormData,
     options?: SigaaRequestOptions
   ): Promise<Page> {
-    const url = this.session.getURL(path);
+    const url = this.httpSession.getURL(path);
     const httpOptions = this.getRequestBasicOptions(
       'POST',
       url,
@@ -372,7 +376,7 @@ export class SigaaHTTP implements HTTP {
     postValues: Record<string, string>,
     options: SigaaRequestOptions = {}
   ): Promise<Page> {
-    const url = this.session.getURL(path);
+    const url = this.httpSession.getURL(path);
 
     const { httpOptions, body } = this.encodePostValue(
       url,
@@ -410,7 +414,7 @@ export class SigaaHTTP implements HTTP {
   }
 
   public async get(path: string, options?: SigaaRequestOptions): Promise<Page> {
-    const url = this.session.getURL(path);
+    const url = this.httpSession.getURL(path);
     const httpOptions = this.getRequestBasicOptions(
       'GET',
       url,
@@ -433,20 +437,23 @@ export class SigaaHTTP implements HTTP {
     options?: SigaaRequestOptions
   ): Promise<Page> {
     try {
-      const sessionHttpOptions = await this.session.afterHTTPOptions(
+      const sessionHttpOptions = await this.httpSession.afterHTTPOptions(
         url,
         httpOptions,
         requestBody,
         options
       );
-      const pageBeforeRequest = await this.session.beforeRequest(
+      const pageBeforeRequest = await this.httpSession.beforeRequest(
         url,
         sessionHttpOptions,
         requestBody,
         options
       );
       if (pageBeforeRequest) {
-        return this.session.afterSuccessfulRequest(pageBeforeRequest, options);
+        return this.httpSession.afterSuccessfulRequest(
+          pageBeforeRequest,
+          options
+        );
       }
 
       const { bodyStream, headers, statusCode } = await this.requestHTTP(
@@ -455,8 +462,14 @@ export class SigaaHTTP implements HTTP {
       );
 
       const bodyBuffer = await this.convertReadebleToBuffer(bodyStream);
-
-      const page = new SigaaPage({
+      const SigaaPageInstitution: SigaaPageInstitutionMap = {
+        IFSC: SigaaPageIFSC,
+        UFPB: SigaaPageUFPB,
+        UNB: SigaaPageUNB
+      };
+      const page = new SigaaPageInstitution[
+        this.httpSession.institutionController.institution
+      ]({
         requestOptions: httpOptions,
         body: bodyBuffer.toString(),
         url,
@@ -464,9 +477,9 @@ export class SigaaHTTP implements HTTP {
         statusCode,
         requestBody
       });
-      return this.session.afterSuccessfulRequest(page, options);
+      return this.httpSession.afterSuccessfulRequest(page, options);
     } catch (err) {
-      return this.session.afterUnsuccessfulRequest(
+      return this.httpSession.afterUnsuccessfulRequest(
         err,
         httpOptions,
         requestBody

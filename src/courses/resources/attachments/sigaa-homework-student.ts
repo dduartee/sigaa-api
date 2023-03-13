@@ -1,4 +1,3 @@
-import { URL } from 'url';
 import { FileData } from '@resources/sigaa-file';
 import { HTTP } from '@session/sigaa-http';
 import { SigaaForm } from '@session/sigaa-page';

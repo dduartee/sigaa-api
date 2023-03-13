@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 const sigaa = new Sigaa({
-  url: 'https://sigaa.ifsc.edu.br'
+  url: 'https://sigaa.ifsc.edu.br',
+  institution: 'IFSC'
 });
 // Pasta para salvar os arquivos
 const BaseDestiny = path.resolve('.', 'downloads');

@@ -1,5 +1,3 @@
-import { URL } from 'url';
-
 import { Lesson } from '@courseResources/sigaa-lesson-student';
 import { NewsData, News } from '@courseResources/sigaa-news-student';
 import { Parser } from '@helpers/sigaa-parser';

@@ -7,6 +7,7 @@ import { Account } from './sigaa-account';
 import { SigaaAccountIFSC } from './sigaa-account-ifsc';
 import { SigaaAccountUFPB } from './sigaa-account-ufpb';
 import { SigaaAccountUNB } from './sigaa-account-unb';
+import { SigaaAccountInstitutionMap } from '@session/sigaa-institution-controller';
 
 /**
  * Abstraction to represent the class that instantiates the account.
@@ -37,13 +38,12 @@ export class SigaaAccountFactory implements AccountFactory {
    * @param page home page of account (page after login).
    */
   async getAccount(page: Page): Promise<Account> {
-    const SigaaAccountInstitution = {
+    const SigaaAccountInstitution: SigaaAccountInstitutionMap = {
       IFSC: SigaaAccountIFSC,
       UFPB: SigaaAccountUFPB,
       UNB: SigaaAccountUNB
     };
-    const institution = this.session.institution;
-    return new SigaaAccountInstitution[institution](
+    return new SigaaAccountInstitution[this.session.institution](
       page,
       this.http,
       this.parser,

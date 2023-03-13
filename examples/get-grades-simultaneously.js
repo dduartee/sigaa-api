@@ -1,7 +1,8 @@
 const { Sigaa } = require('sigaa-api');
 
 const sigaa = new Sigaa({
-  url: 'https://sigaa.ifsc.edu.br'
+  url: 'https://sigaa.ifsc.edu.br',
+  institution: 'IFSC'
 });
 
 // coloque seu usuário
