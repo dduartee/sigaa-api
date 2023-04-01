@@ -1,6 +1,7 @@
 import { Parser } from '@helpers/sigaa-parser';
 import { HTTP } from '@session/sigaa-http';
-import { SigaaSearchTeacher } from './sigaa-search-teacher';
+import { SigaaSearchTeacher } from './teacher/sigaa-search-teacher';
+import { SigaaSearchSubject } from './subject/sigaa-search-subject';
 
 /**
  * @category Public
@@ -10,5 +11,8 @@ export class SigaaSearch {
 
   teacher(): SigaaSearchTeacher {
     return new SigaaSearchTeacher(this.http, this.parser);
+  }
+  subject(): SigaaSearchSubject {
+    return new SigaaSearchSubject(this.http, this.parser)
   }
 }
