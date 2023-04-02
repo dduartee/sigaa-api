@@ -1,4 +1,4 @@
-import { SigaaSearchTeacherResult } from '@search/sigaa-search-teacher-result';
+import { SigaaSearchTeacherResult } from '@search/teacher/sigaa-search-teacher-result';
 import { Sigaa } from '../../sigaa-main';
 import { URL } from 'url';
 

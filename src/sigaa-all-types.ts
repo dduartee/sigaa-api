@@ -46,9 +46,16 @@ export * from '@resources/sigaa-file';
 export * from '@resources/sigaa-resource-manager';
 export * from '@resources/updatable-resource';
 
-export * from '@search/sigaa-search-teacher-result';
-export * from '@search/sigaa-search-teacher';
+
+export * from '@search/sigaa-common-structures';
+
+export * from '@search/subject/sigaa-search-subject-result';
+export * from '@search/subject/sigaa-search-subject';
+
+export * from '@search/teacher/sigaa-search-teacher-result';
+export * from '@search/teacher/sigaa-search-teacher';
 export * from '@search/sigaa-search';
+
 
 export * from '@session/login/sigaa-login-ifsc';
 export * from '@session/login/sigaa-login-ufpb';

@@ -3,12 +3,14 @@ import { HTTP } from '@session/sigaa-http';
 import { Page } from '@session/sigaa-page';
 import { URL } from 'url';
 import {
+  SigaaSearchTeamsResult,
+  SigaaSearchSubjectResult,
   SubjectResult,
-  SigaaSearchSubjectResult
+  TeamsResult
 } from './sigaa-search-subject-result';
 import {
   Campus
-} from '../sigaa-public-interfaces';
+} from '../sigaa-common-structures';
 
 /**
  * @category Public
@@ -51,7 +53,7 @@ export class SigaaSearchSubject {
     } else {
       campusValue = campus.value;
     }
-    const formElement = page.$('form[name="form"]');
+    const formElement = page.$('form[name="formTurma"]');
     const action = formElement.attr('action');
     if (!action)
       throw new Error('SIGAA: Form with action at Subject search page.');
@@ -65,59 +67,72 @@ export class SigaaSearchSubject {
       const name = page.$(input).attr('name');
       if (name) postValues[name] = page.$(input).val();
     }
-    postValues['form:departamento'] = campusValue;
-    postValues['form:buscar'] = 'Buscar';
+    postValues['formTurma:inputDepto'] = campusValue;
+    postValues['formTurma:j_id_jsp_1370969402_11'] = 'Buscar';
     return this.http
       .post(url.href, postValues)
       .then((page) => this.parseSearchResults(page));
   }
 
-  private async parseSubjectSearchResults(page: Page, rowElement: cheerio.Element , results_var: any[]): Promise<void> {
-    const name = this.parser.removeTagsHtml(
+  private async parseSubjectSearchResults(page: Page, rowElement: cheerio.Element): Promise<SubjectResult> {
+    const id_name:string[] = this.parser.removeTagsHtml(
       page.$(rowElement).find('span.tituloDisciplina').html()
-    );
-    
-    // In Progress
-
-    results_var.push(
-      new SigaaSearchSubjectResult(this.http, this.parser, {
-        id,
-        name,
-        teams
-      })
-    );
-
+    ).split("-");
+    const id = id_name[0];
+    const name = id_name[1];
+    const teams:TeamsResult[] = []
+    return {
+      id,
+      name,
+      teams
+    };
   }
 
-  private async parseTeamsSearchResults(page: Page, rowElement: cheerio.Element, results_var: any[], actualTeams_var: any[]): Promise<void> {
-    const id = this.parser.removeTagsHtml(
-      page.$(rowElement).find('span.turma').html()
-    );
-    
-    // In Progress
+  private async parseTeamsSearchResults(page: Page, rowElement: cheerio.Element): Promise<TeamsResult> {
+    const id: number = parseInt(this.parser.removeTagsHtml(
+      page.$(rowElement).find('td.turma').html()
+    ));
 
-    results_var.push(
-      new SigaaSearchSubjectResult(this.http, this.parser, {
-        id,
-        teacher,
-        schedule,
-        location
-      })
+    const teacher: string = this.parser.removeTagsHtml(
+      page.$(rowElement).find('td.nome').html()
     );
+    const schedule: string = this.parser.removeTagsHtml(
+      page.$(rowElement).find('td:nth-of-type(4)').html()
+    );
+    const location: string = this.parser.removeTagsHtml(
+      page.$(rowElement).find('td:nth-of-type(8)').html()
+    );
+
+    return {
+      id,
+      teacher,
+      schedule,
+      location
+    };
+
+    
   }
 
-  private async parseSearchResults(page: Page): Promise<SigaaSearchSubjectResult[]> {
+  private async parseSearchResults(page: Page): Promise<SubjectResult[]> {
     const rowElements = page.$('table.listagem > tbody > tr[class]').toArray();
-    const results:any = [];
-    const actualTeams:any = [];
+    const results:SubjectResult[] = [];
+    let actualTeams:TeamsResult[] = [];
     for (const rowElement of rowElements) {
       if (page.$(rowElement).hasClass("agrupador")) {
-        this.parseSubjectSearchResults(page, rowElement, results);
+        results.push(
+          new SigaaSearchSubjectResult(this.http, this.parser, await this.parseSubjectSearchResults(page, rowElement))
+        );
+        actualTeams = [];
       }
       else if (page.$(rowElement).hasClass("linhaPar") || page.$(rowElement).hasClass("linhaImpar")){
-        this.parseTeamsSearchResults(page, rowElement, results, actualTeams);
+        
+        results[results.length - 1].teams.push(
+          new SigaaSearchTeamsResult(this.http, this.parser, await this.parseTeamsSearchResults(page, rowElement))
+        );
       }
-      else {continue;}
+      else {
+        continue;
+      }
     }
     return results;
   }

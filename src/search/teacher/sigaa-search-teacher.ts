@@ -8,7 +8,7 @@ import {
 } from './sigaa-search-teacher-result';
 import {
   Campus
-} from '../sigaa-public-interfaces';
+} from '../sigaa-common-structures';
 
 /**
  * @category Public
