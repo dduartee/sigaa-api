@@ -44,15 +44,34 @@ export class SigaaSearchSubject {
     return list;
   }
 
-  async getSubjectList(campus?: Campus): Promise<SubjectResult[]> {
+  async search(jsonsify?:boolean, campus?: Campus, year?:number, period?:number): Promise<SubjectResult[]> {
     await this.loadSearchPage();
     const page = this.page as Page;
-    let campusValue;
+    let campusValue, in_json: boolean;
     if (!campus) {
       campusValue = '0';
     } else {
       campusValue = campus.value;
     }
+    if (!jsonsify) {
+      in_json = false;
+    } else {
+      in_json = jsonsify;
+    }
+    if (!period) {
+      period = 1;
+    }
+    else if (Number.isInteger(period) && 1 > period && period > 4) {
+      throw new Error("SIGAA: Invalid period value.");
+    }
+    if (!year) {
+      const now = new Date()
+      year = now.getFullYear();
+    }
+    else if (Number.isInteger(year) && year < 1950 && year > 2100) {
+      throw new Error("SIGAA: Invalid year value.");
+    }
+
     const formElement = page.$('form[name="formTurma"]');
     const action = formElement.attr('action');
     if (!action)
@@ -67,11 +86,14 @@ export class SigaaSearchSubject {
       const name = page.$(input).attr('name');
       if (name) postValues[name] = page.$(input).val();
     }
+    postValues['formTurma:inputNivel'] = "";
     postValues['formTurma:inputDepto'] = campusValue;
+    postValues['formTurma:inputAno'] = year.toString();
+    postValues['formTurma:inputPeriodo'] = period.toString();
     postValues['formTurma:j_id_jsp_1370969402_11'] = 'Buscar';
     return this.http
       .post(url.href, postValues)
-      .then((page) => this.parseSearchResults(page));
+      .then((page) => this.parseSearchResults(page, in_json));
   }
 
   private async parseSubjectSearchResults(page: Page, rowElement: cheerio.Element): Promise<SubjectResult> {
@@ -80,7 +102,7 @@ export class SigaaSearchSubject {
     ).split("-");
     const id = id_name[0];
     const name = id_name[1];
-    const teams:TeamsResult[] = []
+    const teams:any[] = []
     return {
       id,
       name,
@@ -112,20 +134,32 @@ export class SigaaSearchSubject {
 
     
   }
+  private async jsonfySubjectResult(page: Page, rowElements: cheerio.Element[]): Promise<SubjectResult[]> {
+    const results: SubjectResult[] = [];
+    for (const rowElement of rowElements) {
+      if (page.$(rowElement).hasClass("agrupador")) {
+        results.push(await this.parseSubjectSearchResults(page, rowElement));
+        
+      }
+      else if (page.$(rowElement).hasClass("linhaPar") || page.$(rowElement).hasClass("linhaImpar")){
+        results[results.length - 1].teams.push(await this.parseTeamsSearchResults(page, rowElement));
+      }
+      else {
+        continue;
+      }
+    }
+    return results;
+  }
 
-  private async parseSearchResults(page: Page): Promise<SubjectResult[]> {
-    const rowElements = page.$('table.listagem > tbody > tr[class]').toArray();
+  private async objectfySubjectResult(page: Page, rowElements: cheerio.Element[]): Promise<SubjectResult[]> {
     const results:SubjectResult[] = [];
-    let actualTeams:TeamsResult[] = [];
     for (const rowElement of rowElements) {
       if (page.$(rowElement).hasClass("agrupador")) {
         results.push(
           new SigaaSearchSubjectResult(this.http, this.parser, await this.parseSubjectSearchResults(page, rowElement))
         );
-        actualTeams = [];
       }
       else if (page.$(rowElement).hasClass("linhaPar") || page.$(rowElement).hasClass("linhaImpar")){
-        
         results[results.length - 1].teams.push(
           new SigaaSearchTeamsResult(this.http, this.parser, await this.parseTeamsSearchResults(page, rowElement))
         );
@@ -135,5 +169,14 @@ export class SigaaSearchSubject {
       }
     }
     return results;
+  }
+
+  private async parseSearchResults(page: Page, in_json: boolean): Promise<SubjectResult[]> {
+    const rowElements = page.$('table.listagem > tbody > tr[class]').toArray();
+    if (in_json) {
+      return this.jsonfySubjectResult(page, rowElements);
+    } else {
+      return this.objectfySubjectResult(page, rowElements);
+    }
   }
 }

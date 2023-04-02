@@ -1,5 +1,6 @@
 import { Parser } from '@helpers/sigaa-parser';
 import { HTTP, ProgressCallback } from '@session/sigaa-http';
+import { Sigaa } from 'src/sigaa-main';
 import { URL } from 'url';
 
 
@@ -53,8 +54,8 @@ export class SigaaSearchTeamsResult implements TeamsResult {
   private _location: string;
 
   constructor(
-    private http: HTTP,
-    private parser: Parser,
+    private _http: HTTP,
+    private _parser: Parser,
     options: TeamsResultData
     
   ) {
@@ -81,6 +82,17 @@ export class SigaaSearchTeamsResult implements TeamsResult {
     return this._location;
   }
   
+  
+  public get http() : HTTP {
+    return this._http;
+  }
+  
+
+  public get parser() : Parser {
+    return this._parser;
+  }
+  
+  
 }
 
 /**
@@ -92,8 +104,8 @@ export class SigaaSearchSubjectResult implements SubjectResult {
   private _teams: TeamsResultData[];
 
   constructor(
-    private http: HTTP,
-    private parser: Parser,
+    private _http: HTTP,
+    private _parser: Parser,
     options: SubjectResultData
   ) {
     this._id = options.id;
@@ -112,6 +124,16 @@ export class SigaaSearchSubjectResult implements SubjectResult {
   
   public get teams() : TeamsResult[] {
     return this._teams;
+  }
+
+  
+  public get http() : HTTP {
+    return this._http;
+  }
+  
+  
+  public get parser() : Parser {
+    return this._parser;
   }
   
 }

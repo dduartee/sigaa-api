@@ -13,6 +13,6 @@ export class SigaaSearch {
     return new SigaaSearchTeacher(this.http, this.parser);
   }
   subject(): SigaaSearchSubject {
-    return new SigaaSearchSubject(this.http, this.parser)
+    return new SigaaSearchSubject(this.http, this.parser);
   }
 }
