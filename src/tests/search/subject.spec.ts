@@ -1,4 +1,3 @@
-import { SigaaSearchSubject } from "@search/subject/sigaa-search-subject";
 import { Sigaa } from "src/sigaa-main";
 
 

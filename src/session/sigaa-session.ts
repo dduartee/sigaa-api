@@ -19,6 +19,8 @@ export interface Session {
  * @category Internal
  */
 export class SigaaSession implements Session {
-  constructor(public readonly institution: InstitutionType = 'IFSC') {}
+  constructor(public readonly institution: InstitutionType = 'IFSC') {
+    this.institution = institution.toUpperCase() as InstitutionType;
+  }
   loginStatus: LoginStatus = LoginStatus.Unauthenticated;
 }

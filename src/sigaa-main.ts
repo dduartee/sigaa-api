@@ -300,10 +300,9 @@ export class Sigaa {
       UNB: SigaaLoginUNB
     };
     const institution = options.institution ?? 'IFSC';
-    this.loginInstance = new SigaaLoginInstitution[institution](
-      this.http,
-      this.session
-    );
+    this.loginInstance = new SigaaLoginInstitution[
+      institution.toUpperCase() as InstitutionType
+    ](this.http, this.session);
   }
 
   /**
@@ -338,7 +337,7 @@ export class Sigaa {
    * Returns instance of SigaaSearch.
    */
   get search(): SigaaSearch {
-    return new SigaaSearch(this.http, this.parser);
+    return new SigaaSearch(this.http, this.parser, this.session);
   }
 
   /**
