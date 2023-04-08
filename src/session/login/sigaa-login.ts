@@ -12,5 +12,9 @@ export interface Login {
    * @param password
    * @returns Login page result.
    */
-  login(username: string, password: string): Promise<Page>;
+  login(
+    username: string,
+    password: string,
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>
+  ): Promise<Page>;
 }

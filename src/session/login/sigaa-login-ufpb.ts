@@ -70,7 +70,12 @@ export class SigaaLoginUFPB implements Login {
    * @param username
    * @param password
    */
-  async login(username: string, password: string, retry = true): Promise<Page> {
+  async login(
+    username: string,
+    password: string,
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>,
+    retry = true
+  ): Promise<Page> {
     if (this.session.loginStatus === LoginStatus.Authenticated)
       throw new Error('SIGAA: This session already has a user logged in.');
     try {
@@ -80,7 +85,7 @@ export class SigaaLoginUFPB implements Login {
       if (!retry || error.message === this.errorInvalidCredentials) {
         throw error;
       } else {
-        return this.login(username, password, false);
+        return this.login(username, password, recaptchaSolver, false);
       }
     }
   }

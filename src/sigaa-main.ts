@@ -305,8 +305,16 @@ export class Sigaa {
    * @param username
    * @param password
    */
-  async login(username: string, password: string): Promise<Account> {
-    const page = await this.loginInstance.login(username, password);
+  async login(
+    username: string,
+    password: string,
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>
+  ): Promise<Account> {
+    const page = await this.loginInstance.login(
+      username,
+      password,
+      recaptchaSolver
+    );
     try {
       return await this.accountFactory.getAccount(page);
     } catch (err) {

@@ -12,13 +12,11 @@ import { Login } from './sigaa-login';
 export class SigaaLoginIFSC implements Login {
   constructor(protected http: HTTP, protected session: Session) {}
   readonly errorInvalidCredentials = 'SIGAA: Invalid credentials.';
-
-  protected parseMobileLoginForm(
+  protected async parseLoginForm(
     page: Page,
-    username: string,
-    password: string
-  ): SigaaForm {
-    const formElement = page.$('#form-login');
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>
+  ): Promise<SigaaForm> {
+    const formElement = page.$("form[name='loginForm']");
 
     const actionUrl = formElement.attr('action');
     if (!actionUrl) throw new Error('SIGAA: No action form on login page.');
@@ -27,29 +25,16 @@ export class SigaaLoginIFSC implements Login {
 
     const postValues: Record<string, string> = {};
 
-    let hasInputPassword = false;
-    let hasInputText = false;
-    const inputs = formElement.find('input').toArray();
-
-    for (const element of inputs) {
-      const type = page.$(element).attr('type');
+    formElement.find('input').each((index, element) => {
       const name = page.$(element).attr('name');
-      if (!name) continue;
+      if (name) postValues[name] = page.$(element).val();
+    });
 
-      if (type === 'password') {
-        if (hasInputPassword)
-          throw new Error('SIGAA: More than one password input on login form.');
-        hasInputPassword = true;
-        postValues[name] = password;
-      } else if (type === 'text') {
-        if (hasInputText)
-          throw new Error('SIGAA: More than one text input on login form.');
-        hasInputText = true;
-        postValues[name] = username;
-      } else {
-        postValues[name] = page.$(element).val();
-      }
-    }
+    const recaptchaResponse = await this.getRecaptchaResponse(
+      page,
+      recaptchaSolver
+    );
+    postValues['g-recaptcha-response'] = recaptchaResponse;
 
     return { action, postValues };
   }
@@ -58,55 +43,71 @@ export class SigaaLoginIFSC implements Login {
    */
   protected formPage?: Page;
 
-  async getMobileLoginForm(
-    username: string,
-    password: string
+  private async getRecaptchaResponse(
+    page: Page,
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>
+  ) {
+    const recaptchaButton = page.$('.g-recaptcha');
+    const siteKey = recaptchaButton.attr('data-sitekey');
+    const dataAction = recaptchaButton.attr('data-action');
+    if (!siteKey || !dataAction)
+      throw new Error('SIGAA: Could not parse recaptcha data.');
+
+    const recaptchaResponse = await recaptchaSolver(siteKey, dataAction);
+    return recaptchaResponse;
+  }
+
+  async getLoginForm(
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>
   ): Promise<SigaaForm> {
     if (this.formPage) {
-      return this.parseMobileLoginForm(this.formPage, username, password);
+      return this.parseLoginForm(this.formPage, recaptchaSolver);
     } else {
-      const page = await this.http.get('/sigaa/mobile/touch/login.jsf', {
-        mobile: true
-      });
-      return this.parseMobileLoginForm(page, username, password);
+      const page = await this.http.get('/sigaa/verTelaLogin.do');
+      return this.parseLoginForm(page, recaptchaSolver);
     }
   }
 
-  protected async mobileLogin(
+  protected async desktopLogin(
     username: string,
-    password: string
+    password: string,
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>
   ): Promise<Page> {
-    const { action, postValues } = await this.getMobileLoginForm(
-      username,
-      password
-    );
+    const { action, postValues } = await this.getLoginForm(recaptchaSolver);
+    postValues['user.login'] = username;
+    postValues['user.senha'] = password;
     const page = await this.http.post(action.href, postValues);
-    return await this.parseMobileLoginResult(page);
+    return await this.parseLoginResult(page);
   }
   /**
    * Start a session on Sigaa, return login reponse page
    * @param username
    * @param password
    */
-  async login(username: string, password: string, retry = true): Promise<Page> {
+  async login(
+    username: string,
+    password: string,
+    recaptchaSolver: (siteKey: string, dataAction: string) => Promise<string>,
+    retry = true
+  ): Promise<Page> {
     if (this.session.loginStatus === LoginStatus.Authenticated)
       throw new Error('SIGAA: This session already has a user logged in.');
     try {
-      await this.mobileLogin(username, password);
-      const jumpPage = await this.http.get('/sigaa/paginaInicial.do');
-      return this.http.followAllRedirect(jumpPage);
+      const page = await this.desktopLogin(username, password, recaptchaSolver);
+      return this.http.followAllRedirect(page);
     } catch (error) {
       if (!retry || error.message === this.errorInvalidCredentials) {
         throw error;
       } else {
-        return this.login(username, password, false);
+        console.log('SIGAA: Retrying login...');
+        return this.login(username, password, recaptchaSolver, false);
       }
     }
   }
 
-  protected async parseMobileLoginResult(page: Page): Promise<Page> {
+  protected async parseLoginResult(page: Page): Promise<Page> {
     const accountPage = await this.http.followAllRedirect(page);
-    if (accountPage.bodyDecoded.includes('form-login')) {
+    if (accountPage.bodyDecoded.includes('Entrar no Sistema')) {
       if (accountPage.bodyDecoded.includes('Usuário e/ou senha inválidos')) {
         this.formPage = accountPage;
         throw new Error(this.errorInvalidCredentials);
