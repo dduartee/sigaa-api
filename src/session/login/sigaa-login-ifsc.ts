@@ -111,7 +111,18 @@ export class SigaaLoginIFSC implements Login {
       if (accountPage.bodyDecoded.includes('Usuário e/ou senha inválidos')) {
         this.formPage = accountPage;
         throw new Error(this.errorInvalidCredentials);
+      } else if (
+        accountPage.bodyDecoded.includes(
+          'Verificação recaptcha incorreta! Tente novamente.'
+        )
+      ) {
+        throw new Error('SIGAA: Invalid captcha.');
+      } else if (
+        accountPage.bodyDecoded.includes('Comportamento suspeito detectado')
+      ) {
+        throw new Error('SIGAA: Suspicious behavior detected.');
       } else {
+        // console.log(accountPage.bodyDecoded);
         throw new Error('SIGAA: Invalid response after login attempt.');
       }
     } else {

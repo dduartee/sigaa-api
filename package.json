@@ -13,6 +13,7 @@
         "he": "^1.2.0",
         "iconv-lite": "^0.6.3",
         "lodash": "^4.17.20",
+        "recaptchav3bypass": "^1.0.1",
         "source-map-support": "^0.5.19"
     },
     "repository": {
