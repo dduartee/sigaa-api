@@ -48,6 +48,7 @@ import { Request } from '@session/sigaa-http-session';
 import { Page } from '@session/sigaa-page';
 import { CookiesController } from '@session/sigaa-cookies-controller';
 import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
+import { SigaaLoginUNB } from '@session/login/sigaa-login-unb';
 
 /**
  * @category Internal
@@ -293,11 +294,15 @@ export class Sigaa {
         bondFactory
       );
     }
-
-    this.loginInstance =
-      options.login || options.institution === 'UFPB'
-        ? new SigaaLoginUFPB(this.http, this.session)
-        : new SigaaLoginIFSC(this.http, this.session);
+    const SigaaLoginInstitution = {
+      IFSC: SigaaLoginIFSC,
+      UFPB: SigaaLoginUFPB,
+      UNB: SigaaLoginUNB
+    };
+    const institution = options.institution ?? 'IFSC';
+    this.loginInstance = new SigaaLoginInstitution[
+      institution.toUpperCase() as InstitutionType
+    ](this.http, this.session);
   }
 
   /**
@@ -332,7 +337,7 @@ export class Sigaa {
    * Returns instance of SigaaSearch.
    */
   get search(): SigaaSearch {
-    return new SigaaSearch(this.http, this.parser);
+    return new SigaaSearch(this.http, this.parser, this.session);
   }
 
   /**

@@ -47,8 +47,16 @@ export * from '@resources/sigaa-file';
 export * from '@resources/sigaa-resource-manager';
 export * from '@resources/updatable-resource';
 
-export * from '@search/sigaa-search-teacher-result';
-export * from '@search/sigaa-search-teacher';
+export * from '@search/sigaa-common-structures';
+
+export * from '@search/subject/UNB/sigaa-search-subject-result-UNB';
+export * from '@search/subject/UNB/sigaa-search-subject-UNB';
+
+export * from '@search/subject/IFSC/sigaa-search-subject-result-IFSC';
+export * from '@search/subject/IFSC/sigaa-search-subject-IFSC';
+
+export * from '@search/teacher/sigaa-search-teacher-result';
+export * from '@search/teacher/sigaa-search-teacher';
 export * from '@search/sigaa-search';
 
 export * from '@session/login/sigaa-login-ifsc';

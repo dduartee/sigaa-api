@@ -255,12 +255,12 @@ export class SigaaPage implements Page {
     if (!javaScriptCode.includes('getElementById'))
       throw new Error('SIGAA: Form not found.');
 
-    const formQuery = javaScriptCode.replace(
-      /if([\S\s]*?)getElementById\('|'([\S\s]*?)false/gm,
-      ''
+    const formQuery = javaScriptCode.match(
+      /document\.getElementById\('(\w+)'\)/
     );
+    if (!formQuery) throw new Error('SIGAA: Form without id.');
 
-    const formEl = this.$(`#${formQuery}`);
+    const formEl = this.$(`#${formQuery[1]}`);
     if (!formEl) {
       throw new Error('SIGAA: Form not found.');
     }
