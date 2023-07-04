@@ -15,13 +15,11 @@ const main = async () => {
     const http = sigaa.httpFactory.createHttp();
     const homepage = await http.get("/sigaa/vinculos.jsf");
     const account = await sigaa.accountFactory.getAccount(homepage);
-
+    
+    console.log('> Usuário: '+ (await account.getUsername()));
     console.log('> Nome: ' + (await account.getName()));
     console.log('> Emails: ' + (await account.getEmails()).join(', '));
     console.log('> Url foto: ' + (await account.getProfilePictureURL()));
-
-    // Encerra a sessão
-    await account.logoff();
 };
 
 main().catch((err) => {

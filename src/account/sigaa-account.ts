@@ -15,6 +15,7 @@ export interface Account {
    */
   getName(): Promise<string>;
 
+  getUsername(): Promise<string>;
   /**
    * get user's emails
    * @return a promise with user email.
