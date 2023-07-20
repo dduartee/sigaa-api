@@ -1,5 +1,5 @@
 import { Homework } from '@attachments/sigaa-homework-student';
-import { StudentBond } from '@bonds/sigaa-student-bond';
+import { StudentBond } from '@bonds/student/sigaa-student-bond-ifsc';
 import { CourseStudent } from '@courses/sigaa-course-student';
 import { SigaaForm } from '@session/sigaa-page';
 

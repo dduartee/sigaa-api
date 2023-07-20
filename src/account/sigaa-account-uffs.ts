@@ -10,7 +10,7 @@ import { Account } from './sigaa-account';
  * Responsible for representing the user account.
  * @category Internal
  */
-export class SigaaAccountIFSC implements Account {
+export class SigaaAccountUFFS implements Account {
   /**
    * @param homepage homepage (page after login) of user.
    */
@@ -80,8 +80,7 @@ export class SigaaAccountIFSC implements Account {
     }
     if (homepage.url.href.includes('/portais/discente/discente.jsf')) {
       //If it is home page student of desktop version.
-      // this.pagehomeParsePromise = this.parseStudentHomePage(homepage);
-      this.http.get("/sigaa/vinculos.jsf").then((page) => this.parseHomepage(page));
+      this.pagehomeParsePromise = this.parseStudentHomePage(homepage);
     } else if (
       homepage.url.href.includes('/sigaa/vinculos.jsf') ||
       homepage.url.href.includes('/sigaa/escolhaVinculo.do')
@@ -129,7 +128,7 @@ export class SigaaAccountIFSC implements Account {
             .removeTagsHtml(page.$(cells[4]).html())
             .replace(/^Curso: /g, '');
           bond = this.bondFactory.createStudentBond(
-            'IFSC',
+            'UFFS',
             registration,
             program,
             bondSwitchUrl
@@ -212,13 +211,13 @@ export class SigaaAccountIFSC implements Account {
     if (!program) throw new Error('SIGAA: Student bond program not found.');
 
     if (!status) throw new Error('SIGAA: Student bond status not found.');
-    if (status === 'CURSANDO' || status === 'CONCLUINTE')
+    if (status === 'CURSANDO' || status === 'CONCLUINTE' || status === 'ATIVO')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond('IFSC', registration, program, null)
+        this.bondFactory.createStudentBond('UFFS', registration, program, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond('IFSC', registration, program, null)
+        this.bondFactory.createStudentBond('UFFS', registration, program, null)
       );
   }
 

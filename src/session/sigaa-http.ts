@@ -15,6 +15,7 @@ import { SigaaPageInstitutionMap } from './sigaa-institution-controller';
 import { SigaaPageIFSC } from './page/sigaa-page-ifsc';
 import { SigaaPageUFPB } from './page/sigaa-page-ufpb';
 import { SigaaPageUNB } from './page/sigaa-page-unb';
+import { SigaaPageUFFS } from './page/sigaa-page-uffs';
 
 /**
  * @category Public
@@ -465,11 +466,11 @@ export class SigaaHTTP implements HTTP {
       const SigaaPageInstitution: SigaaPageInstitutionMap = {
         IFSC: SigaaPageIFSC,
         UFPB: SigaaPageUFPB,
-        UNB: SigaaPageUNB
+        UNB: SigaaPageUNB,
+        UFFS: SigaaPageUFFS
       };
-      const page = new SigaaPageInstitution[
-        this.httpSession.institutionController.institution
-      ]({
+      const institution = this.httpSession.getInstitution();
+      const page = new SigaaPageInstitution[institution]({
         requestOptions: httpOptions,
         body: bodyBuffer.toString(),
         url,

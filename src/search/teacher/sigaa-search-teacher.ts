@@ -5,14 +5,9 @@ import {
   TeacherResult,
   SigaaSearchTeacherResult
 } from './sigaa-search-teacher-result';
-
-/**
- * @category Public
- */
-export interface Campus {
-  name: string;
-  value: string;
-}
+import {
+  Campus
+} from '../sigaa-common-structures';
 
 /**
  * @category Public

@@ -54,6 +54,7 @@ import {
   SigaaActivityFactory
 } from '@activity/sigaa-activity-factory';
 import { Page } from '@session/sigaa-page';
+import { SigaaLoginUFFS } from '@session/login/sigaa-login-uffs';
 
 /**
  * @category Internal
@@ -316,13 +317,13 @@ export class Sigaa {
     const SigaaLoginInstitution: SigaaLoginInstitutionMap = {
       IFSC: SigaaLoginIFSC,
       UFPB: SigaaLoginUFPB,
-      UNB: SigaaLoginUNB
+      UNB: SigaaLoginUNB,
+      UFFS: SigaaLoginUFFS
     };
     const institution = options.institution ?? 'IFSC';
-    this.loginInstance = new SigaaLoginInstitution[institution](
-      this.http,
-      this.session
-    );
+    this.loginInstance = new SigaaLoginInstitution[
+      institution.toUpperCase() as InstitutionType
+    ](this.http, this.session);
   }
 
   /**
@@ -357,7 +358,7 @@ export class Sigaa {
    * Returns instance of SigaaSearch.
    */
   get search(): SigaaSearch {
-    return new SigaaSearch(this.http, this.parser);
+    return new SigaaSearch(this.http, this.parser, this.session);
   }
 
   /**

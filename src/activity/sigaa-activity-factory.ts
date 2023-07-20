@@ -13,7 +13,7 @@ import {
   ActivityHomeworkData,
   SigaaActivityHomework
 } from './sigaa-homework-activity';
-import { StudentBond } from '@bonds/sigaa-student-bond';
+import { StudentBond } from '@bonds/student/sigaa-student-bond-ifsc';
 
 /**
  * @category Internal

@@ -4,8 +4,11 @@ import { Parser } from '@helpers/sigaa-parser';
 import { HTTP } from '@session/sigaa-http';
 import { HTTPFactory } from '@session/sigaa-http-factory';
 
-import { SigaaStudentBond, StudentBond } from './sigaa-student-bond';
+import { SigaaStudentBondIFSC, StudentBond } from './student/sigaa-student-bond-ifsc';
 import { SigaaTeacherBond, TeacherBond } from './sigaa-teacher-bond';
+import { SigaaStudentBondUFFS } from './student/sigaa-student-bond-uffs';
+import { Session } from '@session/sigaa-session';
+import { InstitutionType } from '@session/sigaa-institution-controller';
 
 /**
  * Union of all bonds (StudentBont and TeacherBond).
@@ -26,6 +29,7 @@ export interface BondFactory {
    * @param bondSwitchUrl If the user has more than one bond, the bond link will be used to change the bond
    */
   createStudentBond(
+    institution: InstitutionType,
     registration: string,
     program: string,
     bondSwitchUrl: URL | null
@@ -59,6 +63,7 @@ export class SigaaBondFactory implements BondFactory {
    * @param bondSwitchUrl If the user has more than one bond, the bond link will be used to change the bond
    */
   createStudentBond(
+    institution: InstitutionType,
     registration: string,
     program: string,
     bondSwitchUrl: URL | null
@@ -69,7 +74,13 @@ export class SigaaBondFactory implements BondFactory {
     } else {
       http = this.httpFactory.createHttp();
     }
-    return new SigaaStudentBond(
+    const SigaaStudentBond = {
+      IFSC: SigaaStudentBondIFSC,
+      UFPB: SigaaStudentBondIFSC,
+      UNB: SigaaStudentBondIFSC,
+      UFFS: SigaaStudentBondUFFS
+    }
+    return new SigaaStudentBond[institution](
       http,
       this.parser,
       this.courseFactory,

@@ -9,14 +9,15 @@ import { Page, SigaaPage } from './sigaa-page';
 import { PageCache } from './sigaa-page-cache';
 import { CookiesController } from './sigaa-cookies-controller';
 import { RequestStackController } from '../helpers/sigaa-request-stack';
-import { InstitutionController } from './sigaa-institution-controller';
+import { InstitutionController, InstitutionType } from './sigaa-institution-controller';
 
 /**
  * Manage a http session
  * @category Internal
  */
 export interface HTTPSession {
-  institutionController: InstitutionController;
+  getInstitution(): InstitutionType
+  getInstitutionURL(): string
   /**
    * if returns string the download is suspended
    * @param url
@@ -131,12 +132,17 @@ export class SigaaHTTPSession implements HTTPSession {
    */
 
   constructor(
-    public institutionController: InstitutionController,
+    private institutionController: InstitutionController,
     private cookiesController: CookiesController,
     private pageCache: PageCache,
     private requestStack: RequestStackController<Request, Page>
-  ) {}
-
+  ) { }
+  getInstitution() {
+    return this.institutionController.institution
+  }
+  getInstitutionURL() {
+    return this.institutionController.url.href
+  }
   /**
    * @inheritdoc
    */
@@ -272,8 +278,8 @@ export class SigaaHTTPSession implements HTTPSession {
     const stack = !httpOptions.headers.Cookie
       ? this.requestStacks.noCookie
       : httpOptions.method === 'POST'
-      ? this.requestStacks.post
-      : this.requestStacks.get;
+        ? this.requestStacks.post
+        : this.requestStacks.get;
 
     const request: Request = {
       httpOptions,

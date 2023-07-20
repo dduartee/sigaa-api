@@ -128,6 +128,7 @@ export class SigaaAccountUNB implements Account {
             .removeTagsHtml(page.$(cells[4]).html())
             .replace(/^Curso: /g, '');
           bond = this.bondFactory.createStudentBond(
+            'UNB',
             registration,
             program,
             bondSwitchUrl
@@ -212,11 +213,11 @@ export class SigaaAccountUNB implements Account {
     if (!status) throw new Error('SIGAA: Student bond status not found.');
     if (status === 'CURSANDO' || status === 'CONCLUINTE')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond(registration, program, null)
+        this.bondFactory.createStudentBond('UNB', registration, program, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond(registration, program, null)
+        this.bondFactory.createStudentBond('UNB', registration, program, null)
       );
   }
 

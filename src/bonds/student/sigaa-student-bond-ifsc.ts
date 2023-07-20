@@ -56,7 +56,7 @@ export interface ActivityTypeExem {
  * Class to represent student bond.
  * @category Internal
  */
-export class SigaaStudentBond implements StudentBond {
+export class SigaaStudentBondIFSC implements StudentBond {
   constructor(
     private http: HTTP,
     private parser: Parser,
