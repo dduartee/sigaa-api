@@ -4,8 +4,10 @@ import { Parser } from '@helpers/sigaa-parser';
 import { HTTP } from '@session/sigaa-http';
 import { HTTPFactory } from '@session/sigaa-http-factory';
 
-import { SigaaStudentBond, StudentBond } from './sigaa-student-bond';
+import { SigaaStudentBondIFSC, StudentBond } from './student/sigaa-student-bond-ifsc';
 import { SigaaTeacherBond, TeacherBond } from './sigaa-teacher-bond';
+import { SigaaStudentBondUFFS } from './student/sigaa-student-bond-uffs';
+import { Session } from '@session/sigaa-session';
 
 /**
  * Union of all bonds (StudentBont and TeacherBond).
@@ -47,6 +49,7 @@ export class SigaaBondFactory implements BondFactory {
   constructor(
     private httpFactory: HTTPFactory,
     private parser: Parser,
+    private session: Session,
     private courseFactory: CourseFactory,
     private activityFactory: ActivityFactory
   ) {}
@@ -69,7 +72,14 @@ export class SigaaBondFactory implements BondFactory {
     } else {
       http = this.httpFactory.createHttp();
     }
-    return new SigaaStudentBond(
+    const SigaaStudentBond = {
+      IFSC: SigaaStudentBondIFSC,
+      UFPB: SigaaStudentBondIFSC,
+      UNB: SigaaStudentBondIFSC,
+      UFFS: SigaaStudentBondUFFS
+    }
+    const institution = this.session.institution;
+    return new SigaaStudentBond[institution](
       http,
       this.parser,
       this.courseFactory,

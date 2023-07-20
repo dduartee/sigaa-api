@@ -49,6 +49,7 @@ import { Page } from '@session/sigaa-page';
 import { CookiesController } from '@session/sigaa-cookies-controller';
 import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
 import { SigaaLoginUNB } from '@session/login/sigaa-login-unb';
+import { SigaaLoginUFFS } from '@session/login/sigaa-login-uffs';
 
 /**
  * @category Internal
@@ -283,6 +284,7 @@ export class Sigaa {
         bondFactory = new SigaaBondFactory(
           this.httpFactory,
           this.parser,
+          this.session,
           courseFactory,
           activityFactory
         );
@@ -297,7 +299,8 @@ export class Sigaa {
     const SigaaLoginInstitution = {
       IFSC: SigaaLoginIFSC,
       UFPB: SigaaLoginUFPB,
-      UNB: SigaaLoginUNB
+      UNB: SigaaLoginUNB,
+      UFFS: SigaaLoginUFFS
     };
     const institution = options.institution ?? 'IFSC';
     this.loginInstance = new SigaaLoginInstitution[

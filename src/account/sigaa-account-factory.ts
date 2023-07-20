@@ -7,6 +7,7 @@ import { Account } from './sigaa-account';
 import { SigaaAccountIFSC } from './sigaa-account-ifsc';
 import { SigaaAccountUFPB } from './sigaa-account-ufpb';
 import { SigaaAccountUNB } from './sigaa-account-unb';
+import { SigaaAccountUFFS } from './sigaa-account-uffs';
 
 /**
  * Abstraction to represent the class that instantiates the account.
@@ -40,7 +41,8 @@ export class SigaaAccountFactory implements AccountFactory {
     const SigaaAccountInstitution = {
       IFSC: SigaaAccountIFSC,
       UFPB: SigaaAccountUFPB,
-      UNB: SigaaAccountUNB
+      UNB: SigaaAccountUNB,
+      UFFS: SigaaAccountUFFS
     };
     const institution = this.session.institution;
     return new SigaaAccountInstitution[institution](

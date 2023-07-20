@@ -17,15 +17,15 @@ import { Activity, ActivityFactory } from '@activity/sigaa-activity-factory';
 export interface StudentBond {
   readonly type: 'student';
   /**
-   * It's the name of the student program, in IFSC it is called "curso".
+   * It's the name of the student program, in UFFS it is called "curso".
    */
   readonly program: string;
   /**
-   * It is the student registration code, in IFSC it is called "matrícula".
+   * It is the student registration code, in UFFS it is called "matrícula".
    */
   readonly registration: string;
   /**
-   * Get courses, in IFSC it is called "Turmas Virtuais".
+   * Get courses, in UFFS it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only current courses.
    * @returns Promise with array of courses.
    */
@@ -56,7 +56,7 @@ export interface ActivityTypeExem {
  * Class to represent student bond.
  * @category Internal
  */
-export class SigaaStudentBond implements StudentBond {
+export class SigaaStudentBondUFFS implements StudentBond {
   constructor(
     private http: HTTP,
     private parser: Parser,
@@ -70,7 +70,7 @@ export class SigaaStudentBond implements StudentBond {
   readonly type = 'student';
   private _currentPeriod?: string;
   /**
-   * Get courses, in IFSC it is called "Turmas Virtuais".
+   * Get courses, in UFFS it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only latest courses.
    * @returns Promise with array of courses.
    */

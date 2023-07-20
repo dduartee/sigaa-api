@@ -1,4 +1,4 @@
-import { StudentBond } from '@bonds/sigaa-student-bond';
+import { StudentBond } from '@bonds/student/sigaa-student-bond-ifsc';
 import { Exam } from '@courseResources/sigaa-exam-student';
 import { CourseStudent } from '@courses/sigaa-course-student';
 

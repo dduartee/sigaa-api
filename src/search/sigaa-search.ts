@@ -21,7 +21,8 @@ export class SigaaSearch {
     const SigaaSearchSubject = {
       IFSC: SigaaSearchSubjectIFSC,
       UNB: SigaaSearchSubjectUNB,
-      UFPB: SigaaSearchSubjectIFSC
+      UFPB: SigaaSearchSubjectIFSC,
+      UFFS: SigaaSearchSubjectIFSC
     };
     return new SigaaSearchSubject[institution](this.http, this.parser);
   }

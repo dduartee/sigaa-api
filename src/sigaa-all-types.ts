@@ -17,7 +17,7 @@ export * from '@attachments/sigaa-video-student';
 export * from '@attachments/sigaa-web-content-student';
 
 export * from '@bonds/sigaa-bond-factory';
-export * from '@bonds/sigaa-student-bond';
+export * from '@bonds/student/sigaa-student-bond-ifsc';
 export * from '@bonds/sigaa-teacher-bond';
 
 export * from '@courseResources/forum/sigaa-course-forum-student';
