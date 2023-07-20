@@ -2,7 +2,6 @@ import { Parser } from '@helpers/sigaa-parser';
 import { HTTP, ProgressCallback } from '@session/sigaa-http';
 import { Session } from '@session/sigaa-session';
 import { LoginStatus } from '../sigaa-types';
-import { URL } from 'url';
 import { BondFactory, BondType } from '@bonds/sigaa-bond-factory';
 import { Page } from '@session/sigaa-page';
 import { Account } from './sigaa-account';
@@ -123,6 +122,7 @@ export class SigaaAccountUFPB implements Account {
             .removeTagsHtml(page.$(cells[4]).html())
             .replace(/^Curso: /g, '');
           bond = this.bondFactory.createStudentBond(
+            'UFPB',
             registration,
             program,
             bondSwitchUrl
@@ -178,7 +178,7 @@ export class SigaaAccountUFPB implements Account {
     if (!program) throw new Error('SIGAA: Student bond program not found.');
 
     this.activeBonds.push(
-      this.bondFactory.createStudentBond(registration, program, null)
+      this.bondFactory.createStudentBond('UFPB', registration, program, null)
     );
   }
 

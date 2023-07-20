@@ -1,9 +1,10 @@
 import { LoginStatus } from '../../sigaa-types';
-import { URL } from 'url';
+
 import { HTTP } from '@session/sigaa-http';
-import { Page, SigaaForm } from '@session/sigaa-page';
 import { Session } from '@session/sigaa-session';
 import { Login } from './sigaa-login';
+import { UFPBPage } from '@session/page/sigaa-page-ufpb';
+import { SigaaForm } from '@session/sigaa-page';
 
 /**
  * Responsible for logging in UFPB.
@@ -13,7 +14,7 @@ export class SigaaLoginUFPB implements Login {
   constructor(protected http: HTTP, protected session: Session) {}
   readonly errorInvalidCredentials = 'SIGAA: Invalid credentials.';
 
-  protected parseLoginForm(page: Page): SigaaForm {
+  protected parseLoginForm(page: UFPBPage): SigaaForm {
     const formElement = page.$("form[name='form']");
 
     const actionUrl = formElement.attr('action');
@@ -56,7 +57,7 @@ export class SigaaLoginUFPB implements Login {
   protected async desktopLogin(
     username: string,
     password: string
-  ): Promise<Page> {
+  ): Promise<UFPBPage> {
     const { action, postValues } = await this.getLoginForm();
 
     postValues['form:login'] = username;
@@ -70,7 +71,11 @@ export class SigaaLoginUFPB implements Login {
    * @param username
    * @param password
    */
-  async login(username: string, password: string, retry = true): Promise<Page> {
+  async login(
+    username: string,
+    password: string,
+    retry = true
+  ): Promise<UFPBPage> {
     if (this.session.loginStatus === LoginStatus.Authenticated)
       throw new Error('SIGAA: This session already has a user logged in.');
     try {
@@ -85,7 +90,7 @@ export class SigaaLoginUFPB implements Login {
     }
   }
 
-  protected async parseDesktopLoginResult(page: Page): Promise<Page> {
+  protected async parseDesktopLoginResult(page: UFPBPage): Promise<UFPBPage> {
     const accountPage = await this.http.followAllRedirect(page);
     if (accountPage.bodyDecoded.includes('action="/sigaa/logon.jsf"')) {
       if (accountPage.bodyDecoded.includes('Usuário e/ou senha inválidos')) {

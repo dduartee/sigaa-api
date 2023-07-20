@@ -2,7 +2,6 @@ import { Parser } from '@helpers/sigaa-parser';
 import { HTTP, ProgressCallback } from '@session/sigaa-http';
 import { Session } from '@session/sigaa-session';
 import { LoginStatus } from '../sigaa-types';
-import { URL } from 'url';
 import { BondFactory, BondType } from '@bonds/sigaa-bond-factory';
 import { Page } from '@session/sigaa-page';
 import { Account } from './sigaa-account';
@@ -129,6 +128,7 @@ export class SigaaAccountUNB implements Account {
             .removeTagsHtml(page.$(cells[4]).html())
             .replace(/^Curso: /g, '');
           bond = this.bondFactory.createStudentBond(
+            'UNB',
             registration,
             program,
             bondSwitchUrl
@@ -213,11 +213,11 @@ export class SigaaAccountUNB implements Account {
     if (!status) throw new Error('SIGAA: Student bond status not found.');
     if (status === 'CURSANDO' || status === 'CONCLUINTE')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond(registration, program, null)
+        this.bondFactory.createStudentBond('UNB', registration, program, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond(registration, program, null)
+        this.bondFactory.createStudentBond('UNB', registration, program, null)
       );
   }
 

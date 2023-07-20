@@ -122,7 +122,7 @@ export class SigaaStudentBondUFFS implements StudentBond {
       button: null
     };
 
-    const tableHeaderCellElements = table.find('thead > tr td').toArray();
+    const tableHeaderCellElements = table.find('thead > tr th').toArray();
     for (let column = 0; column < tableHeaderCellElements.length; column++) {
       const cellContent = this.parser.removeTagsHtml(
         coursesPage.$(tableHeaderCellElements[column]).html()
@@ -198,7 +198,7 @@ export class SigaaStudentBondUFFS implements StudentBond {
           cellElements.eq(tableColumnIndexs.schedule).html()
         );
 
-        const id = form.postValues['idTurma'];
+        const id = form.postValues['frontEndIdTurma'];
 
         if (!id) throw new Error('SIGAA: Course ID not found.');
         const courseData: CourseStudentData = {

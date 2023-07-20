@@ -9,7 +9,7 @@ import { HTTPFactory, SigaaHTTPFactory } from '@session/sigaa-http-factory';
 import { Login } from '@session/login/sigaa-login';
 import { SigaaLoginIFSC } from '@session/login/sigaa-login-ifsc';
 import { SigaaLoginUFPB } from '@session/login/sigaa-login-ufpb';
-import { InstitutionType, Session, SigaaSession } from '@session/sigaa-session';
+import { Session, SigaaSession } from '@session/sigaa-session';
 import { SigaaCookiesController } from '@session/sigaa-cookies-controller';
 import { SigaaPageCacheWithBond } from '@session/sigaa-page-cache-with-bond';
 import { SigaaPageCacheFactory } from '@session/sigaa-page-cache-factory';
@@ -39,16 +39,21 @@ import {
   SigaaLessonParserFactory
 } from '@courses/sigaa-lesson-parser-factory';
 import { XOR } from './sigaa-types';
+import { RequestStackController } from '@helpers/sigaa-request-stack';
+import { Request } from '@session/sigaa-http-session';
+import { CookiesController } from '@session/sigaa-cookies-controller';
+import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
+import { SigaaLoginUNB } from '@session/login/sigaa-login-unb';
+import {
+  InstitutionType,
+  SigaaInstitutionController,
+  SigaaLoginInstitutionMap
+} from '@session/sigaa-institution-controller';
 import {
   ActivityFactory,
   SigaaActivityFactory
 } from '@activity/sigaa-activity-factory';
-import { RequestStackController } from '@helpers/sigaa-request-stack';
-import { Request } from '@session/sigaa-http-session';
 import { Page } from '@session/sigaa-page';
-import { CookiesController } from '@session/sigaa-cookies-controller';
-import { SigaaRequestStack } from '@helpers/sigaa-request-stack';
-import { SigaaLoginUNB } from '@session/login/sigaa-login-unb';
 import { SigaaLoginUFFS } from '@session/login/sigaa-login-uffs';
 
 /**
@@ -57,8 +62,8 @@ import { SigaaLoginUFFS } from '@session/login/sigaa-login-uffs';
 interface SigaaCommonConstructorOptions {
   login?: Login;
   parser?: Parser;
+  session?: Session;
 }
-
 interface SigaaConstructorURL {
   url: string;
   bondController?: BondController;
@@ -101,7 +106,10 @@ interface SigaaConstructorHTTP {
  * @category Public
  */
 export type SigaaOptionsConstructor = SigaaCommonConstructorOptions &
-  XOR<{ institution?: InstitutionType }, { session?: Session }> &
+  XOR<
+    { institution: InstitutionType; url: string },
+    { session: Session; httpSession: HTTPSession }
+  > &
   XOR<SigaaConstructorURL, SigaaConstructorHTTP> &
   XOR<
     WithAccountFactory,
@@ -167,7 +175,12 @@ export class Sigaa {
       this.session = new SigaaSession(options.institution);
     }
 
-    if ('url' in options && options.url) {
+    if (
+      'url' in options &&
+      options.url &&
+      'institution' in options &&
+      options.institution
+    ) {
       let cookiesController: CookiesController;
 
       if ('cookiesController' in options && options.cookiesController) {
@@ -186,9 +199,12 @@ export class Sigaa {
       } else {
         requestStackController = new SigaaRequestStack<Request, Page>();
       }
-
+      const institutionController = new SigaaInstitutionController(
+        options.institution,
+        options.url
+      );
       this.httpSession = new SigaaHTTPSession(
-        options.url,
+        institutionController,
         cookiesController,
         pageCache,
         requestStackController
@@ -203,6 +219,9 @@ export class Sigaa {
         bondController
       );
     } else {
+      if ('institution' in options && options.institution) {
+        throw new Error('SIGAA: Institution must be informed.');
+      }
       if ('httpFactory' in options && options.httpFactory) {
         this.httpFactory = options.httpFactory;
       } else {
@@ -284,7 +303,6 @@ export class Sigaa {
         bondFactory = new SigaaBondFactory(
           this.httpFactory,
           this.parser,
-          this.session,
           courseFactory,
           activityFactory
         );
@@ -296,7 +314,7 @@ export class Sigaa {
         bondFactory
       );
     }
-    const SigaaLoginInstitution = {
+    const SigaaLoginInstitution: SigaaLoginInstitutionMap = {
       IFSC: SigaaLoginIFSC,
       UFPB: SigaaLoginUFPB,
       UNB: SigaaLoginUNB,
