@@ -9,6 +9,7 @@ import {
 import { Homework } from '@attachments/sigaa-homework-student';
 import { Exam } from '@courseResources/sigaa-exam-student';
 import { Activity, ActivityFactory } from '@activity/sigaa-activity-factory';
+import { InstitutionType } from '@session/sigaa-institution-controller';
 
 /**
  * Abstraction to represent a student bond.
@@ -64,6 +65,7 @@ export class SigaaStudentBondUFFS implements StudentBond {
     private activityFactory: ActivityFactory,
     readonly program: string,
     readonly registration: string,
+    readonly institution: InstitutionType,
     readonly bondSwitchUrl: URL | null
   ) {}
 
@@ -210,7 +212,7 @@ export class SigaaStudentBondUFFS implements StudentBond {
           id,
           form
         };
-        listCourses.push(this.courseFactory.createCourseStudent(courseData));
+        listCourses.push(this.courseFactory.createCourseStudent(courseData, this.institution));
       }
     }
     return listCourses;

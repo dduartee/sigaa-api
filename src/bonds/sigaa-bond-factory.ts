@@ -87,6 +87,7 @@ export class SigaaBondFactory implements BondFactory {
       this.activityFactory,
       program,
       registration,
+      institution,
       bondSwitchUrl
     );
   }
