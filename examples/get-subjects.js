@@ -4,21 +4,21 @@ const sigaa = new Sigaa({
   url: 'https://sigaa.ifsc.edu.br',
   institution: 'IFSC'
 });
-let result = sigaa.search.subject()
+const subjectSearch = sigaa.search.subject()
 
 async function main() {
   // get Campus List to find out your Campus' index. 
-  const campusList = await result.getCampusList();
+  const campusList = await subjectSearch.getCampusList();
 
-  const campus = campusList[4];
+  const campus = campusList[2];
   const jsonsify = true;
   const year = 2023;
-  const period = 1;
+  const period = 2;
 
   const subjects = await result.search(jsonsify, campus, year, period);
-
+  
   // get all subjects from your search.
-  console.log('Lista de campus');
+  console.log(`Campus: ${campus.name}`);
   subjects.map(subject => {
     console.log(`\n${subject.id} - ${subject.name}`);
     console.log(`Turmas:`);
