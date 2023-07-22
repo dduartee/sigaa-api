@@ -95,6 +95,7 @@ export interface CourseStudent {
    */
   readonly period: string;
 
+  getCourseForm(): SigaaForm;
   /**
    * Returns the list of lessons.
    */
@@ -234,6 +235,12 @@ export class SigaaCourseStudent implements CourseStudent {
   private currentCoursePage = 'Principal';
 
   /**
+   * Dados para a requisição de uma página da matéria
+   */
+  getCourseForm(): SigaaForm {
+    return this.form;
+  }
+  /**
    * Request the course page using the course ID,
    * it is slower than requestCoursePageUsingForm,
    * but works if the form is invalid.
@@ -314,13 +321,13 @@ export class SigaaCourseStudent implements CourseStudent {
       pageCourseCode = this.parser
         .removeTagsHtml(page.$('#relatorio h3').html())
         .split(' - ')[0];
-      if (page.bodyDecoded.includes("Ainda não foram lançadas notas.")) {
+      if (page.bodyDecoded.includes('Ainda não foram lançadas notas.')) {
         return;
       }
     } else {
       pageCourseCode = this.parser
-      .removeTagsHtml(page.$('#linkCodigoTurma').html())
-      .replace(/ -$/, '');
+        .removeTagsHtml(page.$('#linkCodigoTurma').html())
+        .replace(/ -$/, '');
     }
     if (pageCourseCode !== this.code) {
       throw new Error(
@@ -672,7 +679,7 @@ export class SigaaCourseStudent implements CourseStudent {
         try {
           date = this.parser.parseDates(dateString, 2)[0];
           // eslint-disable-next-line no-empty
-        } catch (err) { }
+        } catch (err) {}
       }
 
       examList.push({
@@ -1104,7 +1111,7 @@ export class SigaaCourseStudent implements CourseStudent {
   async getGrades(retry = true): Promise<GradeGroup[]> {
     try {
       const page = await this.getCourseSubMenu('Ver Notas', retry);
-      if (page.bodyDecoded.includes("Ainda não foram lançadas notas.")) {
+      if (page.bodyDecoded.includes('Ainda não foram lançadas notas.')) {
         return [];
       }
       const getPositionByCellColSpan = (
@@ -1288,7 +1295,8 @@ export class SigaaCourseStudent implements CourseStudent {
    * @inheritdoc
    */
   async getSyllabus(): Promise<Syllabus> {
-    const buttonLabel = this.institution === 'UFFS' ? 'Plano de Curso' : 'Plano de Ensino';
+    const buttonLabel =
+      this.institution === 'UFFS' ? 'Plano de Curso' : 'Plano de Ensino';
     const page = await this.getCourseSubMenu(buttonLabel);
     const tables = page.$('table.listagem').toArray();
 
@@ -1344,7 +1352,7 @@ export class SigaaCourseStudent implements CourseStudent {
                 const dates = this.parser.parseDates(startDateString, 1);
                 startDate = dates[0];
                 // eslint-disable-next-line no-empty
-              } catch (err) { }
+              } catch (err) {}
             }
 
             const endDateString = this.parser.removeTagsHtml(
@@ -1357,7 +1365,7 @@ export class SigaaCourseStudent implements CourseStudent {
                 const dates = this.parser.parseDates(endDateString, 1);
                 endDate = dates[0];
                 // eslint-disable-next-line no-empty
-              } catch (err) { }
+              } catch (err) {}
             }
 
             const description = this.parser.removeTagsHtml(bodyElement.html());
@@ -1384,7 +1392,7 @@ export class SigaaCourseStudent implements CourseStudent {
                 const dates = this.parser.parseDates(dateString, 1);
                 date = dates[0];
                 // eslint-disable-next-line no-empty
-              } catch (err) { }
+              } catch (err) {}
             }
 
             const descriptionText = this.parser.removeTagsHtml(

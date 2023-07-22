@@ -25,6 +25,7 @@ export interface StudentBond {
    * It is the student registration code, in UFFS it is called "matrícula".
    */
   readonly registration: string;
+  readonly bondSwitchUrl: URL | null; // gambiarra, corrigir
   /**
    * Get courses, in UFFS it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only current courses.
@@ -212,7 +213,9 @@ export class SigaaStudentBondUFFS implements StudentBond {
           id,
           form
         };
-        listCourses.push(this.courseFactory.createCourseStudent(courseData, this.institution));
+        listCourses.push(
+          this.courseFactory.createCourseStudent(courseData, this.institution)
+        );
       }
     }
     return listCourses;
