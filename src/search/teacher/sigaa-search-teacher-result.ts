@@ -1,6 +1,5 @@
 import { Parser } from '@helpers/sigaa-parser';
 import { HTTP, ProgressCallback } from '@session/sigaa-http';
-import { URL } from 'url';
 
 /**
  * @category Internal

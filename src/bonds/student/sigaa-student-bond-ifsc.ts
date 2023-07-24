@@ -9,6 +9,7 @@ import {
 import { Homework } from '@attachments/sigaa-homework-student';
 import { Exam } from '@courseResources/sigaa-exam-student';
 import { Activity, ActivityFactory } from '@activity/sigaa-activity-factory';
+import { InstitutionType } from '@session/sigaa-institution-controller';
 
 /**
  * Abstraction to represent a student bond.
@@ -24,8 +25,8 @@ export interface StudentBond {
    * It is the student registration code, in IFSC it is called "matrícula".
    */
   readonly registration: string;
-
   readonly bondSwitchUrl: URL | null; // gambiarra, corrigir
+  readonly period: string | null;
   /**
    * Get courses, in IFSC it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only current courses.
@@ -60,7 +61,7 @@ export interface ActivityTypeExem {
  * Class to represent student bond.
  * @category Internal
  */
-export class SigaaStudentBond implements StudentBond {
+export class SigaaStudentBondIFSC implements StudentBond {
   constructor(
     private http: HTTP,
     private parser: Parser,
@@ -68,12 +69,14 @@ export class SigaaStudentBond implements StudentBond {
     private activityFactory: ActivityFactory,
     readonly program: string,
     readonly registration: string,
+    public period: string,
+    readonly institution: InstitutionType,
     readonly bondSwitchUrl: URL | null
   ) {}
 
   readonly type = 'student';
-  private _currentPeriod?: string;
-  private _campus?: string;
+  private _campus: string | null = null;
+
   /**
    * Get courses, in IFSC it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only latest courses.
@@ -215,7 +218,9 @@ export class SigaaStudentBond implements StudentBond {
           id,
           form
         };
-        listCourses.push(this.courseFactory.createCourseStudent(courseData));
+        listCourses.push(
+          this.courseFactory.createCourseStudent(courseData, this.institution)
+        );
       }
     }
     return listCourses;
@@ -305,14 +310,14 @@ export class SigaaStudentBond implements StudentBond {
     return listActivities;
   }
   async getCurrentPeriod(): Promise<string> {
-    if (this._currentPeriod) return this._currentPeriod;
+    if (this.period) return this.period;
     const frontPage = await this.http.get(
       '/sigaa/portais/discente/discente.jsf'
     );
     const period = frontPage
       .$('#info-usuario > p.periodo-atual > strong')
       .text();
-    this._currentPeriod = period;
+    this.period = period;
     return period;
   }
   async getCampus(): Promise<string> {

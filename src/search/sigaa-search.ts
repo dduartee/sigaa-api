@@ -4,8 +4,9 @@ import { SigaaSearchTeacher } from './teacher/sigaa-search-teacher';
 import { Session } from '@session/sigaa-session';
 import { SigaaSearchSubjectIFSC } from './subject/IFSC/sigaa-search-subject-IFSC';
 import { SigaaSearchSubjectUNB } from './subject/UNB/sigaa-search-subject-UNB';
+import { SigaaSearchSubjectUFFS } from './subject/UFFS/sigaa-search-subject-UFFS';
 
-export type SigaaSearchSubject = SigaaSearchSubjectIFSC | SigaaSearchSubjectUNB;
+export type SigaaSearchSubject = SigaaSearchSubjectIFSC | SigaaSearchSubjectUNB | SigaaSearchSubjectUFFS;
 export class SigaaSearch {
   constructor(
     private http: HTTP,
@@ -21,7 +22,8 @@ export class SigaaSearch {
     const SigaaSearchSubject = {
       IFSC: SigaaSearchSubjectIFSC,
       UNB: SigaaSearchSubjectUNB,
-      UFPB: SigaaSearchSubjectIFSC
+      UFPB: SigaaSearchSubjectIFSC,
+      UFFS: SigaaSearchSubjectUFFS
     };
     return new SigaaSearchSubject[institution](this.http, this.parser);
   }

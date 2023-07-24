@@ -1,7 +1,6 @@
 import { Parser } from '@helpers/sigaa-parser';
 import { HTTP } from '@session/sigaa-http';
 import { Page } from '@session/sigaa-page';
-import { URL } from 'url';
 import {
   SigaaSearchTeamsResultUNB,
   SigaaSearchSubjectResultUNB,

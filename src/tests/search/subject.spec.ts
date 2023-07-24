@@ -3,7 +3,8 @@ import { Sigaa } from "src/sigaa-main";
 
 test('if sigaa search loads campus list', async () => {
     const sigaa = new Sigaa({
-      url: 'https://sigaa.unb.br'
+      url: 'https://sigaa.unb.br',
+      institution: "UNB"
     });
     const list = await sigaa.search.subject().getCampusList();
     for (const campus of list) {

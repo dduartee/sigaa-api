@@ -2,7 +2,6 @@ import { Parser } from '@helpers/sigaa-parser';
 import { HTTP, ProgressCallback } from '@session/sigaa-http';
 import { Session } from '@session/sigaa-session';
 import { LoginStatus } from '../sigaa-types';
-import { URL } from 'url';
 import { BondFactory, BondType } from '@bonds/sigaa-bond-factory';
 import { Page } from '@session/sigaa-page';
 import { Account } from './sigaa-account';
@@ -81,7 +80,8 @@ export class SigaaAccountIFSC implements Account {
     }
     if (homepage.url.href.includes('/portais/discente/discente.jsf')) {
       //If it is home page student of desktop version.
-      this.pagehomeParsePromise = this.parseStudentHomePage(homepage);
+      // this.pagehomeParsePromise = this.parseStudentHomePage(homepage);
+      this.http.get("/sigaa/vinculos.jsf").then((page) => this.parseHomepage(page));
     } else if (
       homepage.url.href.includes('/sigaa/vinculos.jsf') ||
       homepage.url.href.includes('/sigaa/escolhaVinculo.do')
@@ -129,8 +129,10 @@ export class SigaaAccountIFSC implements Account {
             .removeTagsHtml(page.$(cells[4]).html())
             .replace(/^Curso: /g, '');
           bond = this.bondFactory.createStudentBond(
+            'IFSC',
             registration,
             program,
+            null,
             bondSwitchUrl
           );
           break;
@@ -183,7 +185,9 @@ export class SigaaAccountIFSC implements Account {
       const bondPage = await this.http.get('/sigaa/vinculos.jsf');
       return this.parseBondPage(bondPage);
     }
-
+    const period = homepage
+    .$('#info-usuario > p.periodo-atual > strong')
+    .text();
     for (const row of rows) {
       const cells = homepage.$(row).find('td');
       if (cells.length !== 2) {
@@ -213,11 +217,11 @@ export class SigaaAccountIFSC implements Account {
     if (!status) throw new Error('SIGAA: Student bond status not found.');
     if (status === 'CURSANDO' || status === 'CONCLUINTE')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond(registration, program, null)
+        this.bondFactory.createStudentBond('IFSC', registration, program, period, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond(registration, program, null)
+        this.bondFactory.createStudentBond('IFSC', registration, program, period, null)
       );
   }
 

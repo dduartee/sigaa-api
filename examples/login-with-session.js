@@ -9,7 +9,7 @@ const { hostname } = new URL(url);
 const cookiesController = new SigaaCookiesController();
 cookiesController.storeCookies(hostname, [`JSESSIONID=${session}`]);
 
-const sigaa = new Sigaa({ url, cookiesController });
+const sigaa = new Sigaa({ url, institution: "IFSC", cookiesController });
 
 const main = async () => {
     const http = sigaa.httpFactory.createHttp();

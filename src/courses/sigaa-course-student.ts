@@ -1,5 +1,3 @@
-import { URL } from 'url';
-
 import { Lesson } from '@courseResources/sigaa-lesson-student';
 import { NewsData, News } from '@courseResources/sigaa-news-student';
 import { Parser } from '@helpers/sigaa-parser';
@@ -41,6 +39,7 @@ import {
   Student,
   Teacher
 } from '@courseResources/sigaa-member-list-student';
+import { InstitutionType } from '@session/sigaa-institution-controller';
 
 /**
  * @category Internal
@@ -209,6 +208,7 @@ export class SigaaCourseStudent implements CourseStudent {
 
   constructor(
     courseData: CourseStudentData,
+    private institution: InstitutionType,
     private http: HTTP,
     private parser: Parser,
     resourcesManagerFactory: CourseResourcesManagerFactory,
@@ -321,12 +321,14 @@ export class SigaaCourseStudent implements CourseStudent {
       pageCourseCode = this.parser
         .removeTagsHtml(page.$('#relatorio h3').html())
         .split(' - ')[0];
+      if (page.bodyDecoded.includes('Ainda não foram lançadas notas.')) {
+        return;
+      }
     } else {
       pageCourseCode = this.parser
         .removeTagsHtml(page.$('#linkCodigoTurma').html())
         .replace(/ -$/, '');
     }
-
     if (pageCourseCode !== this.code) {
       throw new Error(
         'SIGAA: Using the old page caused the change to the last accessed course instead of the requested course.'
@@ -1109,6 +1111,9 @@ export class SigaaCourseStudent implements CourseStudent {
   async getGrades(retry = true): Promise<GradeGroup[]> {
     try {
       const page = await this.getCourseSubMenu('Ver Notas', retry);
+      if (page.bodyDecoded.includes('Ainda não foram lançadas notas.')) {
+        return [];
+      }
       const getPositionByCellColSpan = (
         ths: cheerio.Cheerio,
         cell: cheerio.Element
@@ -1290,7 +1295,9 @@ export class SigaaCourseStudent implements CourseStudent {
    * @inheritdoc
    */
   async getSyllabus(): Promise<Syllabus> {
-    const page = await this.getCourseSubMenu('Plano de Ensino');
+    const buttonLabel =
+      this.institution === 'UFFS' ? 'Plano de Curso' : 'Plano de Ensino';
+    const page = await this.getCourseSubMenu(buttonLabel);
     const tables = page.$('table.listagem').toArray();
 
     const response: Syllabus = {

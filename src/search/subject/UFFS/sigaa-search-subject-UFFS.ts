@@ -3,16 +3,16 @@ import { HTTP } from '@session/sigaa-http';
 import { Page } from '@session/sigaa-page';
 import { Campus } from '../../sigaa-common-structures';
 import {
-  SigaaSearchSubjectResultIFSC,
-  SigaaSearchTeamsResultIFSC,
-  SubjectResultIFSC,
-  TeamsResultIFSC
-} from './sigaa-search-subject-result-IFSC';
+  SigaaSearchSubjectResultUFFS,
+  SigaaSearchTeamsResultUFFS,
+  SubjectResultUFFS,
+  TeamsResultUFFS
+} from './sigaa-search-subject-result-UFFS';
 
 /**
  * @category Public
  */
-export class SigaaSearchSubjectIFSC {
+export class SigaaSearchSubjectUFFS {
   page: Page | null = null;
 
   constructor(private http: HTTP, private parser: Parser) {}
@@ -44,7 +44,7 @@ export class SigaaSearchSubjectIFSC {
     campus?: Campus,
     year?: number,
     period?: number
-  ): Promise<SubjectResultIFSC[]> {
+  ): Promise<SubjectResultUFFS[]> {
     await this.loadSearchPage();
     const page = this.page as Page;
     let campusValue, in_json: boolean;
@@ -102,7 +102,7 @@ export class SigaaSearchSubjectIFSC {
   private async parseSearchResults(
     page: Page,
     in_json: boolean
-  ): Promise<SubjectResultIFSC[]> {
+  ): Promise<SubjectResultUFFS[]> {
     if (
       page.bodyDecoded.includes(
         'Não foram encontrados resultados para a busca com estes parâmetros.'
@@ -125,7 +125,7 @@ export class SigaaSearchSubjectIFSC {
     page: Page,
     rowHeaderElements: cheerio.Element[],
     rowElements: cheerio.Element[]
-  ): SubjectResultIFSC[] {
+  ): SubjectResultUFFS[] {
     const results = [];
     for (const rowElement of rowElements) {
       if (page.$(rowElement).hasClass('agrupador')) {
@@ -148,12 +148,12 @@ export class SigaaSearchSubjectIFSC {
     page: Page,
     rowHeaderElements: cheerio.Element[],
     rowElements: cheerio.Element[]
-  ): Promise<SubjectResultIFSC[]> {
-    const results: SubjectResultIFSC[] = [];
+  ): Promise<SubjectResultUFFS[]> {
+    const results: SubjectResultUFFS[] = [];
     for (const rowElement of rowElements) {
       if (page.$(rowElement).hasClass('agrupador')) {
         results.push(
-          new SigaaSearchSubjectResultIFSC(
+          new SigaaSearchSubjectResultUFFS(
             this.http,
             this.parser,
             this.parseSubjectSearchResults(page, rowElement)
@@ -164,7 +164,7 @@ export class SigaaSearchSubjectIFSC {
         page.$(rowElement).hasClass('linhaImpar')
       ) {
         results[results.length - 1].teams.push(
-          new SigaaSearchTeamsResultIFSC(
+          new SigaaSearchTeamsResultUFFS(
             this.http,
             this.parser,
             this.parseTeamsSearchResults(page, rowHeaderElements, rowElement)
@@ -179,13 +179,13 @@ export class SigaaSearchSubjectIFSC {
   private parseSubjectSearchResults(
     page: Page,
     rowElement: cheerio.Element
-  ): SubjectResultIFSC {
+  ): SubjectResultUFFS {
     const id_name: string[] = this.parser
       .removeTagsHtml(page.$(rowElement).find('span.tituloDisciplina').html())
       .split(' - ');
     const id = id_name[0];
     const name = id_name[1];
-    const teams: TeamsResultIFSC[] = [];
+    const teams: TeamsResultUFFS[] = [];
     return {
       id,
       name,

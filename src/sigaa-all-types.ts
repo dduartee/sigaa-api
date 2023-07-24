@@ -18,7 +18,7 @@ export * from '@attachments/sigaa-web-content-student';
 export * from '@attachments/sigaa-hyperlink-student';
 
 export * from '@bonds/sigaa-bond-factory';
-export * from '@bonds/sigaa-student-bond';
+export * from '@bonds/student/sigaa-student-bond-ifsc';
 export * from '@bonds/sigaa-teacher-bond';
 
 export * from '@courseResources/forum/sigaa-course-forum-student';
@@ -61,6 +61,7 @@ export * from '@search/sigaa-search';
 
 export * from '@session/login/sigaa-login-ifsc';
 export * from '@session/login/sigaa-login-ufpb';
+export * from '@session/login/sigaa-login-unb';
 export * from '@session/login/sigaa-login';
 
 export * from '@session/sigaa-bond-controller';
@@ -73,5 +74,10 @@ export * from '@session/sigaa-http';
 
 export * from '@session/sigaa-page-cache';
 export * from '@session/sigaa-page';
+export * from '@session/page/sigaa-page-ifsc';
+export * from '@session/page/sigaa-page-ufpb';
+export * from '@session/page/sigaa-page-unb';
+
+export * from '@session/sigaa-institution-controller';
 
 export * from '@session/sigaa-session';
