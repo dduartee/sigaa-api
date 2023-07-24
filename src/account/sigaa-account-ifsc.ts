@@ -420,4 +420,17 @@ export class SigaaAccountIFSC implements Account {
       );
     }
   }
+
+  async getUsername(): Promise<string> {
+    const page = await this.http.get('/sigaa/alterar_dados.jsf');
+    if (page.statusCode !== 302)
+      throw new Error('SIGAA: Unexpected status code at change password form.');
+
+    const redirectURL = new URL(page.headers.location as string);
+    const username = redirectURL.searchParams.get('login');
+    if (!username)
+      throw new Error('SIGAA: Username not found at redirect URL.');
+
+    return username;
+  }
 }

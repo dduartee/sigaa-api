@@ -5,7 +5,7 @@ import { PageCache, SigaaPageCache } from './sigaa-page-cache';
  * @category Internal
  */
 export interface PageCacheFactory {
-  createPageCache(): PageCache;
+  createPageCache(timeoutCache?: number): PageCache;
 }
 
 /**
@@ -13,7 +13,7 @@ export interface PageCacheFactory {
  * @category Internal
  */
 export class SigaaPageCacheFactory implements PageCacheFactory {
-  createPageCache(): PageCache {
-    return new SigaaPageCache();
+  createPageCache(timeoutCache?: number): PageCache {
+    return new SigaaPageCache(timeoutCache);
   }
 }

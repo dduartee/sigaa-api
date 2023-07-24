@@ -10,6 +10,7 @@ import { Homework } from '@attachments/sigaa-homework-student';
 
 import { CourseResourcesManager } from '@courses/sigaa-course-resources-manager';
 import { UpdatableResourceData } from '@resources/sigaa-resource-manager';
+import { HyperlinkAttachment } from '@attachments/sigaa-hyperlink-student';
 
 /**
  * @category Internal
@@ -100,7 +101,15 @@ export class SigaaLessonParser implements LessonParser {
 
   parseLessonPages(pageLessonsList: Page, pageLessonsPaged: Page): void {
     const lessonsElements = this.getElements(pageLessonsList);
-
+    lessonsElements.map((lessonElement) => {
+      const subElements = pageLessonsList
+        .$(lessonElement)
+        .find('.topico-aula')
+        .toArray();
+      subElements.map((subElement) => {
+        lessonsElements.splice(lessonsElements.indexOf(subElement), 1);
+      });
+    });
     const lessonIdsWithReferences = this.parsePagedPage(pageLessonsPaged);
     this.resources.lessons.keepOnly(
       lessonsElements.map(
@@ -144,7 +153,7 @@ export class SigaaLessonParser implements LessonParser {
       titleFull.lastIndexOf('(') + 1,
       titleFull.lastIndexOf(')')
     );
-
+    
     const [startDate, endDate] = this.parserDate(lessonDatesString);
 
     const title = titleFull.slice(0, titleFull.lastIndexOf('(')).trim();
@@ -162,6 +171,11 @@ export class SigaaLessonParser implements LessonParser {
 
     const lessonContentElement = page.$(lessonElement).find('.conteudotopico');
 
+    const attachments = this.parseAttachmentsFromLesson(
+      page,
+      lessonContentElement
+    );
+
     const id = lessonIdWithReference.id;
 
     const lessonHTML = lessonContentElement.html();
@@ -171,10 +185,6 @@ export class SigaaLessonParser implements LessonParser {
       lessonHTML.replace(/<div([\S\s]*?)div>/gm, '')
     );
 
-    const attachments = this.parseAttachmentsFromLesson(
-      page,
-      lessonContentElement
-    );
     const contentText = attachments.reduce((reducer, attachment) => {
       if (attachment.type === 'text') return `${reducer}\n${attachment.body}`;
       return reducer;
@@ -193,6 +203,19 @@ export class SigaaLessonParser implements LessonParser {
     };
 
     return lesson;
+  }
+
+  private removeHyperlinksFromLessonContent(
+    lessonContentElement: cheerio.Cheerio,
+    page: Page
+  ) {
+    const contentParagraphs = lessonContentElement.find('p').toArray();
+    contentParagraphs.map((paragraph) => {
+      const hyperlinks = page.$(paragraph).find('a').toArray();
+      hyperlinks.map((hyperlink) => {
+        page.$(hyperlink).remove();
+      });
+    });
   }
 
   /**
@@ -253,6 +276,8 @@ export class SigaaLessonParser implements LessonParser {
             this.forumsIdIndex++;
             const forum = this.resources.forums.upsert(forumOptions);
             lessonAttachments.push(forum);
+            // eslint-disable-next-line no-empty
+          } else if (iconSrc.includes('user_comment.png')) {
           } else if (iconSrc.includes('portal_turma/site_add.png')) {
             const link = this.parseAttachmentLink(page, attachmentElement);
             lessonAttachments.push(link);
@@ -267,7 +292,43 @@ export class SigaaLessonParser implements LessonParser {
         }
       }
     }
-    return lessonAttachments;
+    const { hyperlinkAttachments } = this.parseAttachmentsHyperlink(
+      page,
+      lessonContentElement
+    );
+    this.removeHyperlinksFromLessonContent(lessonContentElement, page); // Remove hyperlinks from lesson content
+    return lessonAttachments.concat(hyperlinkAttachments);
+  }
+
+  private parseAttachmentsHyperlink(
+    page: Page,
+    lessonContentElement: cheerio.Cheerio
+  ) {
+    const hyperlinkAttachmentElements = page
+      .$(lessonContentElement)
+      .find('p > a')
+      .toArray();
+    const hyperlinkAttachments: HyperlinkAttachment[] = [];
+    if (hyperlinkAttachmentElements.length !== 0) {
+      for (const hyperlinkAttachmentElement of hyperlinkAttachmentElements) {
+        const hyperlinkAttachment = page.$(hyperlinkAttachmentElement);
+        const href = hyperlinkAttachment.attr('href');
+        const title = hyperlinkAttachment.text();
+        if (href && title) {
+          const hyperlinkAttachment: HyperlinkAttachment = {
+            type: 'hyperlink',
+            title,
+            href
+          };
+          hyperlinkAttachments.push(hyperlinkAttachment);
+        } else {
+          throw new Error(
+            "SIGAA: hyperlinkAttachment doesn't have href or title"
+          );
+        }
+      }
+    }
+    return { hyperlinkAttachments, hyperlinkAttachmentElements };
   }
 
   /**
@@ -416,8 +477,8 @@ export class SigaaLessonParser implements LessonParser {
         .find('span[id] > span[id]');
       title = this.parser.removeTagsHtml(titleElement.html());
       const srcIframe = page.$(attachmentElement).find('iframe').attr('src');
-      if (!srcIframe) throw new Error('SIGAA: Video iframe without url.');
-      src = srcIframe;
+      if (!srcIframe) src = '';
+      else src = srcIframe;
     }
 
     return {

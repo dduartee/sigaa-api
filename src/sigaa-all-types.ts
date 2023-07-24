@@ -15,6 +15,7 @@ export * from '@attachments/sigaa-quiz-student';
 export * from '@attachments/sigaa-survey-student';
 export * from '@attachments/sigaa-video-student';
 export * from '@attachments/sigaa-web-content-student';
+export * from '@attachments/sigaa-hyperlink-student';
 
 export * from '@bonds/sigaa-bond-factory';
 export * from '@bonds/student/sigaa-student-bond-ifsc';

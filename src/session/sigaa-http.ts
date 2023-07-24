@@ -284,9 +284,9 @@ export class SigaaHTTP implements HTTP {
       path: link.pathname + link.search,
       method: method,
       headers: {
-        'User-Agent': `SIGAA-Api/1.0 (${
-          options.mobile ? 'Android 7.0; ' : ''
-        }https://github.com/GeovaneSchmitz/sigaa-api)`,
+        'User-Agent': `Mozilla/5.0 (${
+          options.mobile ? 'Android 11.0; ' : ''
+        }SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36`,
         'Accept-Encoding': 'br, gzip, deflate',
         Accept: '*/*',
         'Cache-Control': 'max-age=0',

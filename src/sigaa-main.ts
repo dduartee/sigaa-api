@@ -176,11 +176,10 @@ export class Sigaa {
     }
 
     if (
-      'url' in options &&
       options.url &&
-      'institution' in options &&
       options.institution
-    ) {
+    )
+    {
       let cookiesController: CookiesController;
 
       if ('cookiesController' in options && options.cookiesController) {
@@ -219,9 +218,7 @@ export class Sigaa {
         bondController
       );
     } else {
-      if ('institution' in options && options.institution) {
-        throw new Error('SIGAA: Institution must be informed.');
-      }
+      
       if ('httpFactory' in options && options.httpFactory) {
         this.httpFactory = options.httpFactory;
       } else {

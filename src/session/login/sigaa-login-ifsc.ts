@@ -76,6 +76,7 @@ export class SigaaLoginIFSC implements Login {
     password: string,
     retry = true
   ): Promise<IFSCPage> {
+    throw new Error('SIGAA: This login method is no longer supported by the IFSC, instead use login via the JSESSIONID cookie, see example...');
     if (this.session.loginStatus === LoginStatus.Authenticated)
       throw new Error('SIGAA: This session already has a user logged in.');
     try {

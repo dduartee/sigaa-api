@@ -37,6 +37,8 @@ export interface StudentBond {
   getActivities(): Promise<Activity[]>;
 
   getCurrentPeriod(): Promise<string>;
+
+  getCampus(): Promise<string>;
 }
 export interface ActivityTypeHomework {
   type: 'homework';
@@ -73,6 +75,8 @@ export class SigaaStudentBondIFSC implements StudentBond {
   ) {}
 
   readonly type = 'student';
+  private _campus: string | null = null;
+
   /**
    * Get courses, in IFSC it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only latest courses.
@@ -315,5 +319,14 @@ export class SigaaStudentBondIFSC implements StudentBond {
       .text();
     this.period = period;
     return period;
+  }
+  async getCampus(): Promise<string> {
+    if (this._campus) return this._campus;
+    const frontPage = await this.http.get(
+      '/sigaa/portais/discente/discente.jsf'
+    );
+    const campus = this.parser.removeTagsHtml(frontPage.$('p.unidade').html());
+    this._campus = campus;
+    return campus;
   }
 }
