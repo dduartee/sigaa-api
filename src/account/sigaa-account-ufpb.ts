@@ -125,6 +125,7 @@ export class SigaaAccountUFPB implements Account {
             'UFPB',
             registration,
             program,
+            null,
             bondSwitchUrl
           );
           break;
@@ -171,14 +172,16 @@ export class SigaaAccountUFPB implements Account {
     const program = this.parser.removeTagsHtml(
       homepage.$('.painel-usuario-identificacao div').eq(1).html()
     );
-
+    // const period = homepage
+    // .$('#info-usuario > p.periodo-atual > strong')
+    // .text();
     if (!registration)
       throw new Error('SIGAA: Student bond without registration code.');
 
     if (!program) throw new Error('SIGAA: Student bond program not found.');
 
     this.activeBonds.push(
-      this.bondFactory.createStudentBond('UFPB', registration, program, null)
+      this.bondFactory.createStudentBond('UFPB', registration, program, null, null)
     );
   }
 

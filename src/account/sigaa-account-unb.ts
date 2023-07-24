@@ -131,6 +131,7 @@ export class SigaaAccountUNB implements Account {
             'UNB',
             registration,
             program,
+            null,
             bondSwitchUrl
           );
           break;
@@ -183,7 +184,9 @@ export class SigaaAccountUNB implements Account {
       const bondPage = await this.http.get('/sigaa/vinculos.jsf');
       return this.parseBondPage(bondPage);
     }
-
+    const period = homepage
+      .$('#info-usuario > p.periodo-atual > strong')
+      .text();
     for (const row of rows) {
       const cells = homepage.$(row).find('td');
       if (cells.length !== 2) {
@@ -213,11 +216,11 @@ export class SigaaAccountUNB implements Account {
     if (!status) throw new Error('SIGAA: Student bond status not found.');
     if (status === 'CURSANDO' || status === 'CONCLUINTE')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond('UNB', registration, program, null)
+        this.bondFactory.createStudentBond('UNB', registration, program, period, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond('UNB', registration, program, null)
+        this.bondFactory.createStudentBond('UNB', registration, program, period, null)
       );
   }
 

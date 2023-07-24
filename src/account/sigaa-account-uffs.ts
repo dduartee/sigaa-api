@@ -90,9 +90,9 @@ export class SigaaAccountUFFS implements Account {
     } else if (
       homepage.url.href.includes('/sigaa/telasPosSelecaoVinculos.jsf')
     ) {
-      this.pagehomeParsePromise = this.http
+      this.http
         .get(homepage.url.href, { noCache: true })
-        .then((page) => this.parseBondPage(page));
+        .then((page) => this.parseHomepage(page));
     } else {
       throw new Error('SIGAA: Unknown homepage format.');
     }
@@ -103,51 +103,60 @@ export class SigaaAccountUFFS implements Account {
    * @param page page to parse.
    */
   private async parseBondPage(page: Page) {
-    const rows = page.$('table.subFormulario tbody tr').toArray();
-    for (const row of rows) {
-      const cells = page.$(row).find('td').toArray();
-      if (cells.length === 0) continue;
+    const bondsTables = page.$('table.tabela-selecao-vinculo').toArray(); // tabela dos vinculos ativos e inativos (2)
+    if (bondsTables.length > 2) {
+      throw new Error('SIGAA: Invalid bonds table.');
+    }
+    for (const bondsTable of bondsTables) {
+      const rows = page.$('table.tabela-selecao-vinculo tbody tr').toArray();
+      for (const row of rows) {
+        const cells = page.$(row).find('td').toArray();
+        if (cells.length === 0) continue;
 
-      const bondType = this.parser.removeTagsHtml(
-        page.$(row).find('#tdTipo').html()
-      );
-      const status = this.parser.removeTagsHtml(page.$(cells[3]).html());
-      let bond;
-      switch (bondType) {
-        case 'Discente': {
-          const registration = this.parser.removeTagsHtml(
-            page.$(cells[2]).html()
-          );
+        const bondType = this.parser.removeTagsHtml(
+          page.$(row).find('#tdTipo').html()
+        );
+        const status = this.parser.removeTagsHtml(
+          page.$(bondsTable).find('caption').html()
+        );
+        let bond;
+        switch (bondType) {
+          case 'Discente': {
+            const registration = this.parser.removeTagsHtml(
+              page.$(cells[2]).html()
+            );
 
-          const url = page.$(row).find('a[href]').attr('href');
-          if (!url)
-            throw new Error('SIGAA: Bond switch url could not be found.');
-          const bondSwitchUrl = new URL(url, page.url);
+            const url = page.$(row).find('a[href]').attr('href');
+            if (!url)
+              throw new Error('SIGAA: Bond switch url could not be found.');
+            const bondSwitchUrl = new URL(url, page.url);
 
-          const program = this.parser
-            .removeTagsHtml(page.$(cells[4]).html())
-            .replace(/^Curso: /g, '');
-          bond = this.bondFactory.createStudentBond(
-            'UFFS',
-            registration,
-            program,
-            bondSwitchUrl
-          );
-          break;
+            const program = this.parser
+              .removeTagsHtml(page.$(cells[3]).html())
+              .replace(/^Curso: /g, '');
+            bond = this.bondFactory.createStudentBond(
+              'UFFS',
+              registration,
+              program,
+              null,
+              bondSwitchUrl
+            );
+            break;
+          }
+          case 'Docente': {
+            bond = this.bondFactory.createTeacherBond();
+            break;
+          }
         }
-        case 'Docente': {
-          bond = this.bondFactory.createTeacherBond();
-          break;
-        }
+        if (bond)
+          if (status === 'Ativos') {
+            this.activeBonds.push(bond);
+          } else if (status === 'Inativos') {
+            this.inactiveBonds.push(bond);
+          } else {
+            console.log('SIGAA: WARNING invalid status: ' + status);
+          }
       }
-      if (bond)
-        if (status === 'Sim') {
-          this.activeBonds.push(bond);
-        } else if (status === 'Não') {
-          this.inactiveBonds.push(bond);
-        } else {
-          console.log('SIGAA: WARNING invalid status: ' + status);
-        }
     }
   }
 
@@ -183,7 +192,9 @@ export class SigaaAccountUFFS implements Account {
       const bondPage = await this.http.get('/sigaa/vinculos.jsf');
       return this.parseBondPage(bondPage);
     }
-
+    const period = homepage
+      .$('#info-usuario > p.periodo-atual > strong')
+      .text();
     for (const row of rows) {
       const cells = homepage.$(row).find('td');
       if (cells.length !== 2) {
@@ -213,11 +224,11 @@ export class SigaaAccountUFFS implements Account {
     if (!status) throw new Error('SIGAA: Student bond status not found.');
     if (status === 'CURSANDO' || status === 'CONCLUINTE' || status === 'ATIVO')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond('UFFS', registration, program, null)
+        this.bondFactory.createStudentBond('UFFS', registration, program, period, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond('UFFS', registration, program, null)
+        this.bondFactory.createStudentBond('UFFS', registration, program, period, null)
       );
   }
 

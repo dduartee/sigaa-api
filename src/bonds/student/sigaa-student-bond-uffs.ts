@@ -66,12 +66,12 @@ export class SigaaStudentBondUFFS implements StudentBond {
     private activityFactory: ActivityFactory,
     readonly program: string,
     readonly registration: string,
+    public period: string | null,
     readonly institution: InstitutionType,
     readonly bondSwitchUrl: URL | null
   ) {}
 
   readonly type = 'student';
-  private _currentPeriod?: string;
   /**
    * Get courses, in UFFS it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only latest courses.
@@ -305,14 +305,16 @@ export class SigaaStudentBondUFFS implements StudentBond {
     return listActivities;
   }
   async getCurrentPeriod(): Promise<string> {
-    if (this._currentPeriod) return this._currentPeriod;
+    if (this.period) return this.period;
+    // caso o usuário tenha sido redirecionado para o vinculos.jsf, não é possivel retornar o periodo de cada vinculo.
+    // por isso, quando não informado no constructor, fará a requisição na discente.jsf
     const frontPage = await this.http.get(
       '/sigaa/portais/discente/discente.jsf'
     );
     const period = frontPage
       .$('#info-usuario > p.periodo-atual > strong')
       .text();
-    this._currentPeriod = period;
+    this.period = period;
     return period;
   }
 }

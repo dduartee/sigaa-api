@@ -132,6 +132,7 @@ export class SigaaAccountIFSC implements Account {
             'IFSC',
             registration,
             program,
+            null,
             bondSwitchUrl
           );
           break;
@@ -184,7 +185,9 @@ export class SigaaAccountIFSC implements Account {
       const bondPage = await this.http.get('/sigaa/vinculos.jsf');
       return this.parseBondPage(bondPage);
     }
-
+    const period = homepage
+    .$('#info-usuario > p.periodo-atual > strong')
+    .text();
     for (const row of rows) {
       const cells = homepage.$(row).find('td');
       if (cells.length !== 2) {
@@ -214,11 +217,11 @@ export class SigaaAccountIFSC implements Account {
     if (!status) throw new Error('SIGAA: Student bond status not found.');
     if (status === 'CURSANDO' || status === 'CONCLUINTE')
       this.activeBonds.push(
-        this.bondFactory.createStudentBond('IFSC', registration, program, null)
+        this.bondFactory.createStudentBond('IFSC', registration, program, period, null)
       );
     else
       this.inactiveBonds.push(
-        this.bondFactory.createStudentBond('IFSC', registration, program, null)
+        this.bondFactory.createStudentBond('IFSC', registration, program, period, null)
       );
   }
 

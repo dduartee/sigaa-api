@@ -26,6 +26,7 @@ export interface StudentBond {
    */
   readonly registration: string;
   readonly bondSwitchUrl: URL | null; // gambiarra, corrigir
+  readonly period: string | null;
   /**
    * Get courses, in IFSC it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only current courses.
@@ -66,12 +67,12 @@ export class SigaaStudentBondIFSC implements StudentBond {
     private activityFactory: ActivityFactory,
     readonly program: string,
     readonly registration: string,
+    public period: string,
     readonly institution: InstitutionType,
     readonly bondSwitchUrl: URL | null
   ) {}
 
   readonly type = 'student';
-  private _currentPeriod?: string;
   /**
    * Get courses, in IFSC it is called "Turmas Virtuais".
    * @param allPeriods if true, all courses will be returned; otherwise, only latest courses.
@@ -305,14 +306,14 @@ export class SigaaStudentBondIFSC implements StudentBond {
     return listActivities;
   }
   async getCurrentPeriod(): Promise<string> {
-    if (this._currentPeriod) return this._currentPeriod;
+    if (this.period) return this.period;
     const frontPage = await this.http.get(
       '/sigaa/portais/discente/discente.jsf'
     );
     const period = frontPage
       .$('#info-usuario > p.periodo-atual > strong')
       .text();
-    this._currentPeriod = period;
+    this.period = period;
     return period;
   }
 }

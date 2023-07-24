@@ -32,6 +32,7 @@ export interface BondFactory {
     institution: InstitutionType,
     registration: string,
     program: string,
+    period: string | null,
     bondSwitchUrl: URL | null
   ): StudentBond;
 
@@ -66,6 +67,7 @@ export class SigaaBondFactory implements BondFactory {
     institution: InstitutionType,
     registration: string,
     program: string,
+    period: string,
     bondSwitchUrl: URL | null
   ): StudentBond {
     let http: HTTP;
@@ -87,6 +89,7 @@ export class SigaaBondFactory implements BondFactory {
       this.activityFactory,
       program,
       registration,
+      period,
       institution,
       bondSwitchUrl
     );
